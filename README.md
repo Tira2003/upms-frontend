@@ -1,8 +1,5 @@
 
-  # Create login and signup screens
-
-  This is a code bundle for Create login and signup screens. The original project is available at https://www.figma.com/design/vkVnMkadkcK7GGjLmBzqWn/Create-login-and-signup-screens.
-
+  
   ## Running the code
 
   Run `npm i` to install the dependencies.
