@@ -1,20 +1,6 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 
-const FONT = "'Google Sans Flex', sans-serif";
-const NAVY = "#0a1628";
-const GOLD = "#F59E0B";
-const GOLD_DARK = "#D97706";
-
-// Light theme tokens
-const PAGE_BG = "#F3F4F6";
-const CARD_BG = "#FFFFFF";
-const TEXT_PRIMARY = "#111827";
-const TEXT_SECONDARY = "#6B7280";
-const TEXT_MUTED = "#9CA3AF";
-const BORDER = "#E5E7EB";
-const INPUT_BG = "#FFFFFF";
-
 interface LoginScreenProps {
   onBack: () => void;
   onLoginSuccess: () => void;
@@ -46,34 +32,12 @@ export function LoginScreen({ onBack, onLoginSuccess, onGoRegister }: LoginScree
     setTimeout(() => { setIsLoading(false); onLoginSuccess(); }, 1200);
   };
 
-  const inputBase: React.CSSProperties = {
-    background: INPUT_BG,
-    border: `1px solid ${BORDER}`,
-    color: TEXT_PRIMARY,
-    fontFamily: FONT,
-    fontSize: "0.9rem",
-    outline: "none",
-    transition: "border-color 0.2s",
-  };
-
   return (
-    <div
-      className="relative min-h-screen w-full flex items-center justify-center p-4"
-      style={{ background: PAGE_BG, fontFamily: FONT }}
-    >
+    <div className="relative min-h-screen w-full flex items-center justify-center p-4 bg-gray-100 font-sans">
       {/* Back button — top left */}
       <button
         onClick={onBack}
-        className="absolute top-6 left-6 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full transition-all"
-        style={{
-          background: CARD_BG,
-          border: `1px solid ${BORDER}`,
-          color: TEXT_SECONDARY,
-          fontSize: "0.8rem",
-          boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
-        }}
-        onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = TEXT_PRIMARY; }}
-        onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = TEXT_SECONDARY; }}
+        className="absolute top-6 left-6 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-gray-200 text-gray-500 text-[0.8rem] shadow-sm hover:text-gray-900 transition-all"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round" />
@@ -86,22 +50,11 @@ export function LoginScreen({ onBack, onLoginSuccess, onGoRegister }: LoginScree
         initial={{ opacity: 0, y: 28, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-        className="relative z-10 w-full max-w-[420px] rounded-2xl p-8"
-        style={{
-          background: CARD_BG,
-          border: `1px solid ${BORDER}`,
-          boxShadow: "0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04)",
-        }}
+        className="relative z-10 w-full max-w-[420px] rounded-2xl p-8 bg-white border border-gray-200 shadow-md shadow-gray-200/50"
       >
         {/* Logo */}
         <div className="flex justify-center mb-6">
-          <div
-            className="w-12 h-12 rounded-xl flex items-center justify-center"
-            style={{
-              background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DARK})`,
-              boxShadow: `0 8px 24px rgba(245,158,11,0.35)`,
-            }}
-          >
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-gold to-gold-dark shadow-lg shadow-gold/35">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
               <path d="M12 2L2 7l10 5 10-5-10-5z" fill="white" />
               <path d="M2 17l10 5 10-5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -112,13 +65,10 @@ export function LoginScreen({ onBack, onLoginSuccess, onGoRegister }: LoginScree
 
         {/* Heading */}
         <div className="text-center mb-7">
-          <h1
-            className="mb-1.5"
-            style={{ color: TEXT_PRIMARY, fontSize: "1.75rem", fontWeight: 700, letterSpacing: "-0.02em" }}
-          >
+          <h1 className="mb-1.5 text-gray-900 text-[1.75rem] font-bold tracking-tight">
             Sign In
           </h1>
-          <p style={{ color: TEXT_SECONDARY, fontSize: "0.875rem" }}>
+          <p className="text-gray-500 text-sm">
             Enter your institutional credentials to continue
           </p>
         </div>
@@ -126,12 +76,12 @@ export function LoginScreen({ onBack, onLoginSuccess, onGoRegister }: LoginScree
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Email */}
           <div>
-            <label className="block mb-1.5" style={{ color: TEXT_PRIMARY, fontSize: "0.8rem", fontWeight: 500 }}>
+            <label className="block mb-1.5 text-gray-900 text-[0.8rem] font-medium">
               Institutional Email
             </label>
             <div className="relative">
-              <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={TEXT_MUTED} strokeWidth="1.5">
+              <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                   <polyline points="22,6 12,13 2,6" />
                 </svg>
@@ -141,24 +91,20 @@ export function LoginScreen({ onBack, onLoginSuccess, onGoRegister }: LoginScree
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); setErrors((p) => ({ ...p, email: undefined })); }}
                 placeholder="name@sjp.ac.lk"
-                className="w-full pl-10 pr-4 py-3 rounded-xl"
-                style={{
-                  ...inputBase,
-                  border: `1px solid ${errors.email ? "#EF4444" : BORDER}`,
-                }}
-                onFocus={(e) => { if (!errors.email) e.currentTarget.style.borderColor = GOLD; }}
-                onBlur={(e) => { if (!errors.email) e.currentTarget.style.borderColor = BORDER; }}
+                className={`w-full pl-10 pr-4 py-3 rounded-xl bg-white border outline-none text-sm transition-all ${
+                  errors.email ? "border-red-500 focus:border-red-500" : "border-gray-200 focus:border-gold"
+                }`}
               />
             </div>
             {errors.email && (
-              <p className="mt-1 text-red-400" style={{ fontSize: "0.75rem" }}>{errors.email}</p>
+              <p className="mt-1 text-red-500 text-xs">{errors.email}</p>
             )}
           </div>
 
           {/* Password */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label style={{ color: TEXT_PRIMARY, fontSize: "0.8rem", fontWeight: 500 }}>
+              <label className="text-gray-900 text-[0.8rem] font-medium">
                 Password
               </label>
               <button
@@ -168,16 +114,14 @@ export function LoginScreen({ onBack, onLoginSuccess, onGoRegister }: LoginScree
                   setForgotSent(true);
                   setTimeout(() => setForgotSent(false), 4000);
                 }}
-                style={{ color: GOLD, fontSize: "0.78rem", fontWeight: 500 }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#FCD34D"; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = GOLD; }}
+                className="text-gold font-medium text-[0.78rem] hover:text-amber-500 transition-colors"
               >
                 Forgot password?
               </button>
             </div>
             <div className="relative">
-              <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={TEXT_MUTED} strokeWidth="1.5">
+              <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                   <path d="M7 11V7a5 5 0 0110 0v4" strokeLinecap="round" />
                 </svg>
@@ -187,21 +131,14 @@ export function LoginScreen({ onBack, onLoginSuccess, onGoRegister }: LoginScree
                 value={password}
                 onChange={(e) => { setPassword(e.target.value); setErrors((p) => ({ ...p, password: undefined })); }}
                 placeholder="••••••••"
-                className="w-full pl-10 pr-12 py-3 rounded-xl"
-                style={{
-                  ...inputBase,
-                  border: `1px solid ${errors.password ? "#EF4444" : BORDER}`,
-                }}
-                onFocus={(e) => { if (!errors.password) e.currentTarget.style.borderColor = GOLD; }}
-                onBlur={(e) => { if (!errors.password) e.currentTarget.style.borderColor = BORDER; }}
+                className={`w-full pl-10 pr-12 py-3 rounded-xl bg-white border outline-none text-sm transition-all ${
+                  errors.password ? "border-red-500 focus:border-red-500" : "border-gray-200 focus:border-gold"
+                }`}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword((p) => !p)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 transition-colors"
-                style={{ color: TEXT_MUTED }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = TEXT_SECONDARY; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = TEXT_MUTED; }}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 transition-colors text-gray-400 hover:text-gray-600"
               >
                 {showPassword ? (
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -217,42 +154,37 @@ export function LoginScreen({ onBack, onLoginSuccess, onGoRegister }: LoginScree
               </button>
             </div>
             {errors.password && (
-              <p className="mt-1 text-red-400" style={{ fontSize: "0.75rem" }}>{errors.password}</p>
+              <p className="mt-1 text-red-500 text-xs">{errors.password}</p>
             )}
           </div>
 
           {/* Remember for 30 days */}
-          <label className="flex items-center gap-2.5 cursor-pointer select-none" style={{ color: TEXT_SECONDARY, fontSize: "0.82rem" }}>
-            <div
-              className="w-4 h-4 rounded flex items-center justify-center shrink-0 transition-all"
-              style={{
-                background: remember ? `linear-gradient(135deg, ${GOLD}, ${GOLD_DARK})` : "transparent",
-                border: remember ? "none" : `1.5px solid ${BORDER}`,
-              }}
+          <div className="flex items-center gap-2.5 cursor-pointer select-none text-gray-500 text-[0.82rem]">
+            <button
+              type="button"
               onClick={() => setRemember((p) => !p)}
+              className={`w-4 h-4 rounded flex items-center justify-center shrink-0 transition-all border ${
+                remember ? "bg-gradient-to-br from-gold to-gold-dark border-none" : "border-gray-300"
+              }`}
             >
               {remember && (
                 <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
-                  <path d="M2 6l3 3 5-5" stroke={NAVY} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M2 6l3 3 5-5" stroke="#0a1628" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               )}
-            </div>
-            Remember for 30 days
-          </label>
+            </button>
+            <span onClick={() => setRemember((p) => !p)}>Remember for 30 days</span>
+          </div>
 
           {/* Sign In button */}
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3.5 rounded-full transition-all duration-200 flex items-center justify-center gap-2 mt-1"
-            style={{
-              background: isLoading ? `rgba(245,158,11,0.6)` : `linear-gradient(135deg, ${GOLD} 0%, ${GOLD_DARK} 100%)`,
-              color: NAVY,
-              fontWeight: 700,
-              fontSize: "0.95rem",
-              letterSpacing: "0.01em",
-              boxShadow: isLoading ? "none" : `0 8px 28px rgba(245,158,11,0.35)`,
-            }}
+            className={`w-full py-3.5 rounded-full transition-all duration-200 flex items-center justify-center gap-2 mt-1 text-navy font-bold text-[0.95rem] tracking-wide ${
+              isLoading 
+                ? "bg-gold/60 cursor-not-allowed shadow-none" 
+                : "bg-gradient-to-br from-gold to-gold-dark shadow-lg shadow-gold/30 hover:brightness-105 active:scale-[0.99]"
+            }`}
           >
             {isLoading ? (
               <>
@@ -268,31 +200,15 @@ export function LoginScreen({ onBack, onLoginSuccess, onGoRegister }: LoginScree
 
         {/* Divider */}
         <div className="flex items-center gap-3 my-5">
-          <div className="flex-1 h-px" style={{ background: BORDER }} />
-          <span style={{ color: TEXT_MUTED, fontSize: "0.75rem", letterSpacing: "0.08em" }}>OR</span>
-          <div className="flex-1 h-px" style={{ background: BORDER }} />
+          <div className="flex-1 h-px bg-gray-200" />
+          <span className="text-gray-400 text-[0.75rem] tracking-widest font-semibold">OR</span>
+          <div className="flex-1 h-px bg-gray-200" />
         </div>
 
         {/* Microsoft Outlook SSO */}
         <button
           type="button"
-          className="w-full py-3 rounded-xl flex items-center justify-center gap-2.5 transition-all"
-          style={{
-            background: CARD_BG,
-            border: `1px solid ${BORDER}`,
-            color: TEXT_PRIMARY,
-            fontWeight: 500,
-            fontSize: "0.88rem",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background = "#F9FAFB";
-            (e.currentTarget as HTMLButtonElement).style.borderColor = "#D1D5DB";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background = CARD_BG;
-            (e.currentTarget as HTMLButtonElement).style.borderColor = BORDER;
-          }}
+          className="w-full py-3 rounded-xl flex items-center justify-center gap-2.5 transition-all bg-white border border-gray-200 text-gray-900 font-medium text-[0.88rem] shadow-sm hover:bg-gray-50 hover:border-gray-300"
         >
           <svg width="17" height="17" viewBox="0 0 21 21" fill="none">
             <rect x="1" y="1" width="9" height="9" fill="#F25022" />
@@ -304,13 +220,11 @@ export function LoginScreen({ onBack, onLoginSuccess, onGoRegister }: LoginScree
         </button>
 
         {/* Register link */}
-        <p className="text-center mt-6" style={{ color: TEXT_SECONDARY, fontSize: "0.85rem" }}>
+        <p className="text-center mt-6 text-gray-500 text-[0.85rem]">
           Don't have an account?{" "}
           <button
             onClick={onGoRegister}
-            style={{ color: GOLD, fontWeight: 600 }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = "#FCD34D"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = GOLD; }}
+            className="text-gold font-semibold hover:text-amber-500 transition-colors"
           >
             Request access
           </button>
@@ -321,19 +235,13 @@ export function LoginScreen({ onBack, onLoginSuccess, onGoRegister }: LoginScree
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-4 flex items-center gap-2 px-4 py-3 rounded-xl"
-            style={{
-              background: "rgba(16,185,129,0.08)",
-              border: "1px solid rgba(16,185,129,0.3)",
-              color: "#10B981",
-              fontSize: "0.8rem",
-            }}
+            className="mt-4 flex items-center gap-2 px-4 py-3 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-600 text-[0.8rem]"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M22 11.08V12a10 10 0 11-5.93-9.14" strokeLinecap="round" />
               <polyline points="22 4 12 14.01 9 11.01" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            Password reset link sent to <strong>{email}</strong>
+            <span>Password reset link sent to <strong>{email}</strong></span>
           </motion.div>
         )}
       </motion.div>

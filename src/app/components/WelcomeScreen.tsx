@@ -13,24 +13,12 @@ interface WelcomeScreenProps {
   onSignUp: () => void;
 }
 
-const FONT = "'Google Sans Flex', sans-serif";
-const NAVY = "#0a1628";
-const GOLD = "#F59E0B";
-const GOLD_DARK = "#D97706";
-
 export function WelcomeScreen({
   onLogin,
   onSignUp,
 }: WelcomeScreenProps) {
   return (
-    <div
-      className="relative min-h-screen w-full overflow-hidden flex flex-col"
-      style={{
-        background:
-          "linear-gradient(180deg, #fafaf9 0%, #f5f5f4 100%)",
-        fontFamily: FONT,
-      }}
-    >
+    <div className="relative min-h-screen w-full overflow-hidden flex flex-col bg-gradient-to-b from-stone-50 to-stone-100 font-sans">
       {/* Header */}
       <motion.header
         initial={{ opacity: 0, y: -16 }}
@@ -39,12 +27,7 @@ export function WelcomeScreen({
         className="relative z-10 flex items-center justify-between px-10 pt-7 pb-2"
       >
         <div className="flex items-center gap-3">
-          <div
-            className="w-10 h-10 rounded-lg flex items-center justify-center"
-            style={{
-              background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DARK})`,
-            }}
-          >
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-gradient-to-br from-gold to-gold-dark shadow-md">
             <svg
               width="22"
               height="22"
@@ -72,31 +55,15 @@ export function WelcomeScreen({
             </svg>
           </div>
           <div>
-            <div
-              style={{
-                color: NAVY,
-                fontWeight: 600,
-                fontSize: "0.95rem",
-              }}
-            >
+            <div className="text-navy font-semibold text-[0.95rem]">
               UPMS
             </div>
-            <div
-              className="text-[10px] tracking-[0.15em] uppercase"
-              style={{ color: "#78716c" }}
-            >
+            <div className="text-[10px] tracking-[0.15em] uppercase text-stone-500">
               University of Sri Jayewardenepura
             </div>
           </div>
         </div>
-        <div
-          className="px-3 py-1.5 rounded-full text-xs tracking-widest uppercase"
-          style={{
-            background: "rgba(245,158,11,0.1)",
-            border: "1px solid rgba(245,158,11,0.3)",
-            color: GOLD_DARK,
-          }}
-        >
+        <div className="px-3 py-1.5 rounded-full text-xs tracking-widest uppercase bg-gold/10 border border-gold/30 text-gold-dark font-medium">
           UPMS v2.0
         </div>
       </motion.header>
@@ -109,10 +76,7 @@ export function WelcomeScreen({
           transition={{ duration: 0.5, delay: 0.1 }}
           className="text-center"
         >
-          <div
-            className="text-xs tracking-[0.2em] uppercase mb-5"
-            style={{ color: GOLD_DARK, fontWeight: 600 }}
-          >
+          <div className="text-xs tracking-[0.2em] uppercase mb-5 text-gold-dark font-semibold">
             Procurement Management System
           </div>
         </motion.div>
@@ -125,32 +89,18 @@ export function WelcomeScreen({
             delay: 0.15,
             ease: "easeOut",
           }}
-          className="text-center"
-          style={{
-            color: NAVY,
-            fontSize: "clamp(2.4rem, 5.5vw, 4.5rem)",
-            fontWeight: 600,
-            letterSpacing: "-0.025em",
-            lineHeight: 1.05,
-            maxWidth: "900px",
-          }}
+          className="text-center text-navy text-[clamp(2.4rem,5.5vw,4.5rem)] font-semibold tracking-tight leading-[1.05] max-w-[900px]"
         >
           Streamlined University
           <br />
-          <span style={{ color: GOLD_DARK }}>Procurement</span>
+          <span className="text-gold-dark">Procurement</span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.35 }}
-          className="text-center mt-6 max-w-xl"
-          style={{
-            color: "#57534e",
-            fontSize: "1.05rem",
-            fontWeight: 300,
-            lineHeight: 1.6,
-          }}
+          className="text-center mt-6 max-w-xl text-stone-600 text-[1.05rem] font-light leading-relaxed"
         >
           A unified digital platform for managing university
           procurement — from requisition to delivery, with
@@ -166,16 +116,7 @@ export function WelcomeScreen({
         >
           <button
             onClick={onSignUp}
-            className="group relative overflow-hidden px-7 py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2"
-            style={{
-              background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DARK})`,
-              color: NAVY,
-              fontWeight: 600,
-              fontSize: "0.95rem",
-              letterSpacing: "0.02em",
-              minWidth: "170px",
-              boxShadow: "0 8px 24px rgba(245,158,11,0.3)",
-            }}
+            className="group relative overflow-hidden px-7 py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 bg-gradient-to-br from-gold to-gold-dark text-navy font-semibold text-[0.95rem] tracking-wide min-w-[170px] shadow-lg shadow-gold/30 hover:brightness-105 active:scale-[0.98]"
           >
             Create Account
             <ArrowRight
@@ -186,32 +127,7 @@ export function WelcomeScreen({
           </button>
           <button
             onClick={onLogin}
-            className="px-7 py-3 rounded-lg transition-all duration-200 bg-[#00000000]"
-            style={{
-              background: "white",
-              border: "1px solid #d6d3d1",
-              color: NAVY,
-              fontWeight: 500,
-              fontSize: "0.95rem",
-              letterSpacing: "0.02em",
-              minWidth: "170px",
-            }}
-            onMouseEnter={(e) => {
-              (
-                e.currentTarget as HTMLButtonElement
-              ).style.borderColor = NAVY;
-              (
-                e.currentTarget as HTMLButtonElement
-              ).style.background = "#fafaf9";
-            }}
-            onMouseLeave={(e) => {
-              (
-                e.currentTarget as HTMLButtonElement
-              ).style.borderColor = "#d6d3d1";
-              (
-                e.currentTarget as HTMLButtonElement
-              ).style.background = "white";
-            }}
+            className="px-7 py-3 rounded-lg transition-all duration-200 bg-white border border-stone-300 text-navy font-medium text-[0.95rem] tracking-wide min-w-[170px] hover:border-navy hover:bg-stone-50 active:scale-[0.98]"
           >
             Sign In
           </button>
@@ -252,18 +168,15 @@ export function WelcomeScreen({
             />
           </svg>
 
-          <div className="relative flex items-center justify-between gap-4 py-10 px-4 sm:px-8">
+          <div className="relative flex flex-col md:flex-row items-center justify-between gap-6 py-10 px-4 sm:px-8">
             {/* Step 1: Requisition cards stack */}
             <div className="relative flex-1 flex justify-center">
-              <div
-                className="relative"
-                style={{ width: "180px", height: "210px" }}
-              >
+              <div className="relative w-[180px] h-[210px]">
                 {[
                   {
                     label: "Stationery",
                     icon: <FileText size={14} />,
-                    color: "#000",
+                    color: "#000000",
                     offset: 0,
                     rot: -8,
                   },
@@ -277,39 +190,29 @@ export function WelcomeScreen({
                   {
                     label: "IT Hardware",
                     icon: <ShoppingCart size={14} />,
-                    color: GOLD,
+                    color: "#F59E0B",
                     offset: 36,
                     rot: 6,
                   },
                 ].map((c, i) => (
                   <div
                     key={c.label}
-                    className="absolute bg-white rounded-xl p-3 shadow-md"
+                    className="absolute bg-white rounded-xl p-3 shadow-md border border-stone-200 w-[130px] h-[175px]"
                     style={{
-                      width: "130px",
-                      height: "175px",
                       left: `${c.offset}px`,
                       top: `${i * 6}px`,
                       transform: `rotate(${c.rot}deg)`,
-                      border: "1px solid #e7e5e4",
                       zIndex: i + 1,
                     }}
                   >
                     <div className="flex items-start justify-between mb-2">
-                      <div
-                        style={{
-                          fontSize: "0.7rem",
-                          fontWeight: 600,
-                          color: NAVY,
-                          lineHeight: 1.15,
-                        }}
-                      >
+                      <div className="text-[0.7rem] font-semibold text-navy leading-[1.15]">
                         Requisition
                         <br />
                         {c.label}
                       </div>
                       <div
-                        className="w-6 h-6 rounded-full flex items-center justify-center"
+                        className="w-6 h-6 rounded-full flex items-center justify-center text-xs"
                         style={{
                           background: `${c.color}1a`,
                           color: c.color,
@@ -319,34 +222,10 @@ export function WelcomeScreen({
                       </div>
                     </div>
                     <div className="space-y-1.5 mt-3">
-                      <div
-                        className="h-1.5 rounded-full"
-                        style={{
-                          background: "#e7e5e4",
-                          width: "90%",
-                        }}
-                      />
-                      <div
-                        className="h-1.5 rounded-full"
-                        style={{
-                          background: "#e7e5e4",
-                          width: "70%",
-                        }}
-                      />
-                      <div
-                        className="h-1.5 rounded-full"
-                        style={{
-                          background: "#e7e5e4",
-                          width: "80%",
-                        }}
-                      />
-                      <div
-                        className="h-1.5 rounded-full"
-                        style={{
-                          background: "#e7e5e4",
-                          width: "55%",
-                        }}
-                      />
+                      <div className="h-1.5 rounded-full bg-stone-200 w-[90%]" />
+                      <div className="h-1.5 rounded-full bg-stone-200 w-[70%]" />
+                      <div className="h-1.5 rounded-full bg-stone-200 w-[80%]" />
+                      <div className="h-1.5 rounded-full bg-stone-200 w-[55%]" />
                     </div>
                   </div>
                 ))}
@@ -354,37 +233,21 @@ export function WelcomeScreen({
             </div>
 
             {/* Arrow 1 */}
-            <div className="flex-shrink-0">
-              <div
-                className="w-9 h-9 rounded-md flex items-center justify-center"
-                style={{
-                  background: "white",
-                  border: "1px solid #e7e5e4",
-                }}
-              >
+            <div className="flex-shrink-0 rotate-90 md:rotate-0">
+              <div className="w-9 h-9 rounded-md flex items-center justify-center bg-white border border-stone-200 shadow-sm">
                 <ArrowRight
                   size={16}
                   strokeWidth={2}
-                  style={{ color: "#a8a29e" }}
+                  className="text-stone-400"
                 />
               </div>
             </div>
 
             {/* Step 2: Approval / signature */}
             <div className="flex-1 flex justify-center">
-              <div
-                className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center justify-center"
-                style={{
-                  width: "230px",
-                  height: "230px",
-                  border: "1px solid #e7e5e4",
-                }}
-              >
+              <div className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center justify-center w-[230px] h-[230px] border border-stone-200">
                 <div className="relative w-full h-[110px] flex items-center justify-center">
-                  <div
-                    className="absolute inset-x-4 top-4 bottom-4 rounded-md"
-                    style={{ border: `1.5px dashed ${GOLD}` }}
-                  />
+                  <div className="absolute inset-x-4 top-4 bottom-4 rounded-md border-[1.5px] border-dashed border-gold" />
                   <svg
                     width="160"
                     height="70"
@@ -393,35 +256,26 @@ export function WelcomeScreen({
                   >
                     <path
                       d="M10 50 Q 20 20, 35 35 T 60 40 Q 75 20, 90 45 T 120 35 Q 135 20, 150 40"
-                      stroke={NAVY}
+                      stroke="currentColor"
+                      className="text-navy"
                       strokeWidth="2.2"
                       strokeLinecap="round"
                       fill="none"
                     />
                     <path
                       d="M40 55 L 90 55"
-                      stroke={NAVY}
+                      stroke="currentColor"
+                      className="text-navy"
                       strokeWidth="1.5"
                       strokeLinecap="round"
                     />
                   </svg>
                 </div>
                 <div className="w-full border-t border-stone-200 mt-2 pt-3 text-center">
-                  <div
-                    style={{
-                      color: NAVY,
-                      fontWeight: 600,
-                      fontSize: "0.85rem",
-                    }}
-                  >
+                  <div className="text-navy font-semibold text-[0.85rem]">
                     Dr. R. Perera
                   </div>
-                  <div
-                    style={{
-                      color: GOLD_DARK,
-                      fontSize: "0.7rem",
-                    }}
-                  >
+                  <div className="text-gold-dark text-[0.7rem] font-medium">
                     Head of Department
                   </div>
                 </div>
@@ -429,74 +283,35 @@ export function WelcomeScreen({
             </div>
 
             {/* Arrow 2 */}
-            <div className="flex-shrink-0">
-              <div
-                className="w-9 h-9 rounded-md flex items-center justify-center"
-                style={{
-                  background: "white",
-                  border: "1px solid #e7e5e4",
-                }}
-              >
+            <div className="flex-shrink-0 rotate-90 md:rotate-0">
+              <div className="w-9 h-9 rounded-md flex items-center justify-center bg-white border border-stone-200 shadow-sm">
                 <ArrowRight
                   size={16}
                   strokeWidth={2}
-                  style={{ color: "#a8a29e" }}
+                  className="text-stone-400"
                 />
               </div>
             </div>
 
             {/* Step 3: Purchase Order */}
             <div className="flex-1 flex justify-center">
-              <div
-                className="bg-white rounded-xl shadow-md p-5"
-                style={{
-                  width: "230px",
-                  height: "230px",
-                  border: "1px solid #e7e5e4",
-                }}
-              >
+              <div className="bg-white rounded-xl shadow-md p-5 w-[230px] h-[230px] border border-stone-200">
                 <div className="flex items-start justify-between mb-4">
-                  <div
-                    className="w-8 h-8 rounded-md flex items-center justify-center"
-                    style={{
-                      background: `${GOLD}1a`,
-                      color: GOLD_DARK,
-                    }}
-                  >
+                  <div className="w-8 h-8 rounded-md flex items-center justify-center bg-gold/10 text-gold-dark">
                     <Check size={16} strokeWidth={2.5} />
                   </div>
                   <PenLine
                     size={14}
-                    style={{ color: "#a8a29e" }}
+                    className="text-stone-400"
                   />
                 </div>
-                <div
-                  style={{
-                    color: "#78716c",
-                    fontSize: "0.7rem",
-                    letterSpacing: "0.08em",
-                  }}
-                >
+                <div className="text-stone-500 text-[0.7rem] tracking-widest uppercase">
                   PO-2026-0042
                 </div>
-                <div
-                  style={{
-                    color: NAVY,
-                    fontSize: "1.4rem",
-                    fontWeight: 700,
-                    letterSpacing: "-0.02em",
-                    marginTop: "2px",
-                  }}
-                >
+                <div className="text-navy text-[1.4rem] font-bold tracking-tight mt-0.5">
                   LKR 284,342
                 </div>
-                <div
-                  style={{
-                    color: "#78716c",
-                    fontSize: "0.7rem",
-                    marginTop: "2px",
-                  }}
-                >
+                <div className="text-stone-500 text-[0.7rem] mt-0.5">
                   Due in 15 days
                 </div>
                 <div className="mt-4 space-y-2">
@@ -505,19 +320,10 @@ export function WelcomeScreen({
                       key={k}
                       className="flex items-center gap-2"
                     >
-                      <div
-                        style={{
-                          color: "#a8a29e",
-                          fontSize: "0.65rem",
-                          width: "44px",
-                        }}
-                      >
+                      <div className="text-stone-400 text-[0.65rem] w-11">
                         {k}
                       </div>
-                      <div
-                        className="flex-1 h-1.5 rounded-full"
-                        style={{ background: "#e7e5e4" }}
-                      />
+                      <div className="flex-1 h-1.5 rounded-full bg-stone-100" />
                     </div>
                   ))}
                 </div>
@@ -526,26 +332,18 @@ export function WelcomeScreen({
           </div>
         </motion.div>
 
-        
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 1.1 }}
-          className="mt-6 text-xs"
-          style={{ color: "#a8a29e" }}
+          className="mt-6 text-xs text-stone-400"
         >
-          Authorized personnel only · University of Sri
-          Jayewardenepura
+          Authorized personnel only · University of Sri Jayewardenepura
         </motion.p>
       </div>
 
       {/* Top accent bar */}
-      <div
-        className="absolute top-0 left-0 w-full h-[3px]"
-        style={{
-          background: `linear-gradient(90deg, transparent, ${GOLD} 30%, ${GOLD} 70%, transparent)`,
-        }}
-      />
+      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-transparent via-gold to-transparent" />
     </div>
   );
 }

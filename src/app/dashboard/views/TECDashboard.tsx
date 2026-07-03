@@ -1,0 +1,132 @@
+import { useState } from "react";
+import type { UserContext } from "../types";
+import { WelcomeBanner } from "../components/WelcomeBanner";
+import { StatCardRow } from "../components/StatCard";
+import { ActionQueueList } from "../components/ActionQueueList";
+import { ProcurementTable } from "../components/ProcurementTable";
+import { EmptyState } from "../components/EmptyState";
+import { MOCK_PROCUREMENTS, getActionQueueForRole, formatLKR } from "../data";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TEC Dashboard — TEC Member (Technical Evaluation Committee)
+// Tabs: Dashboard · Evaluations · All Procurements
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface TECDashboardProps {
+  user: UserContext;
+  activeTab: string;
+  onTabChange: (key: string) => void;
+}
+
+export function TECDashboard({ user, activeTab, onTabChange }: TECDashboardProps) {
+  if (activeTab === "evaluations")  return <EvaluationsPanel />;
+  if (activeTab === "procurements") return <AllProcurementsPanel />;
+  return <TECOverview user={user} onTabChange={onTabChange} />;
+}
+
+function TECOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k: string) => void }) {
+  const queue = getActionQueueForRole("TEC");
+  return (
+    <div style={{ padding: "28px 32px", maxWidth: 1100 }}>
+      <WelcomeBanner user={user} />
+      <StatCardRow total={MOCK_PROCUREMENTS.length} inQueue={queue.length} actionRequired={queue.length} completed={0} />
+      <ActionQueueList items={queue} onViewAll={() => onTabChange("evaluations")} onItemClick={() => onTabChange("evaluations")} />
+      <div style={{ background: "#FFFFFF", border: "1px solid #E5E7EB", borderRadius: 10, padding: "18px 20px" }}>
+        <h3 style={{ fontSize: 13, fontWeight: 700, color: "#F59E0B", margin: 0, marginBottom: 12 }}>TEC Responsibilities</h3>
+        <ul style={{ margin: 0, paddingLeft: 18, display: "flex", flexDirection: "column", gap: 6 }}>
+          {["Preliminary evaluation of submitted bids", "Technical evaluation (specifications compliance)", "Financial evaluation & BES preparation", "Submit evaluation report to Tender Board"].map(s => (
+            <li key={s} style={{ fontSize: 12, color: "#4B5563" }}>{s}</li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+function EvaluationsPanel() {
+  const items = MOCK_PROCUREMENTS.filter(p => p.status === "Technical Evaluation");
+  const [selected, setSelected] = useState(items[0] ?? null);
+  const [scores, setScores] = useState({ technical: "", financial: "", compliance: "" });
+
+  return (
+    <div style={{ padding: "28px 32px" }}>
+      <div style={{ marginBottom: 20 }}>
+        <h1 style={{ fontSize: 18, fontWeight: 700, color: "#111827", margin: 0, marginBottom: 2 }}>Evaluations</h1>
+        <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>Technical and financial evaluation of bids (&gt; LKR 500,000)</p>
+      </div>
+
+      {items.length === 0 ? (
+        <EmptyState icon="inbox" title="No evaluations pending" description="Procurements requiring TEC evaluation will appear here." />
+      ) : (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1.5fr", gap: 20, alignItems: "start" }}>
+          <div style={{ background: "#FFFFFF", border: "1px solid #E5E7EB", borderRadius: 10, overflow: "hidden" }}>
+            <div style={{ padding: "14px 18px", borderBottom: "1px solid #F3F4F6" }}>
+              <h3 style={{ fontSize: 13, fontWeight: 700, color: "#111827", margin: 0 }}>Pending Evaluation ({items.length})</h3>
+            </div>
+            {items.map(pr => (
+              <div key={pr.id} onClick={() => setSelected(pr)} style={{ padding: "14px 18px", cursor: "pointer", borderBottom: "1px solid #F9FAFB", background: selected?.id === pr.id ? "#FFF7ED" : "transparent" }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#2563EB", fontFamily: "monospace" }}>{pr.id}</div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: "#111827", margin: "3px 0" }}>{pr.title}</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#B45309" }}>{formatLKR(pr.value)}</div>
+              </div>
+            ))}
+          </div>
+
+          {selected && (
+            <div style={{ background: "#FFFFFF", border: "1px solid #E5E7EB", borderRadius: 10, padding: "24px" }}>
+              <h3 style={{ fontSize: 14, fontWeight: 700, margin: 0, marginBottom: 4 }}>{selected.title}</h3>
+              <p style={{ fontSize: 12, color: "#6B7280", margin: 0, marginBottom: 20 }}>{selected.id} · {selected.faculty} · {formatLKR(selected.value)}</p>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                {[["Technical Score (0–100)", "technical"], ["Financial Score (0–100)", "financial"], ["Compliance Score (0–100)", "compliance"]].map(([label, key]) => (
+                  <div key={key}>
+                    <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#374151", marginBottom: 6 }}>{label}</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={scores[key as keyof typeof scores]}
+                      onChange={e => setScores(p => ({ ...p, [key]: e.target.value }))}
+                      placeholder="Enter score"
+                      style={{ width: "100%", padding: "9px 12px", border: "1px solid #D1D5DB", borderRadius: 7, fontSize: 13, outline: "none", boxSizing: "border-box" as const, fontFamily: "inherit" }}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <button
+                disabled={!scores.technical || !scores.financial || !scores.compliance}
+                style={{
+                  marginTop: 20,
+                  width: "100%",
+                  padding: "10px",
+                  background: !scores.technical || !scores.financial || !scores.compliance ? "#D1D5DB" : "#7A0C0C",
+                  color: "#FFFFFF",
+                  border: "none",
+                  borderRadius: 7,
+                  fontSize: 13,
+                  fontWeight: 700,
+                  cursor: !scores.technical ? "not-allowed" : "pointer",
+                }}
+              >
+                Submit BES Report to Tender Board
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function AllProcurementsPanel() {
+  return (
+    <div style={{ padding: "28px 32px" }}>
+      <div style={{ marginBottom: 20 }}>
+        <h1 style={{ fontSize: 18, fontWeight: 700, color: "#111827", margin: 0, marginBottom: 2 }}>All Procurements</h1>
+        <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>{MOCK_PROCUREMENTS.length} records visible for your role</p>
+      </div>
+      <ProcurementTable procurements={MOCK_PROCUREMENTS} title="" subtitle="" />
+    </div>
+  );
+}
