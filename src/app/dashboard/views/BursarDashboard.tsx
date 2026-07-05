@@ -16,11 +16,12 @@ interface BursarDashboardProps {
   user: UserContext;
   activeTab: string;
   onTabChange: (key: string) => void;
+  onViewProcurement: (id: string) => void;
 }
 
-export function BursarDashboard({ user, activeTab, onTabChange }: BursarDashboardProps) {
+export function BursarDashboard({ user, activeTab, onTabChange, onViewProcurement }: BursarDashboardProps) {
   if (activeTab === "fund-verification") return <FundVerificationPanel />;
-  if (activeTab === "procurements")      return <AllProcurementsPanel />;
+  if (activeTab === "procurements")      return <AllProcurementsPanel onViewProcurement={onViewProcurement} />;
   return <BursarOverview user={user} onTabChange={onTabChange} />;
 }
 
@@ -123,12 +124,12 @@ function FundVerificationPanel() {
   );
 }
 
-function AllProcurementsPanel() {
+function AllProcurementsPanel({ onViewProcurement }: { onViewProcurement: (id: string) => void }) {
   return (
     <div style={{ padding: "28px 28px" }}>
       <PageTitleBar title="All Procurements" subtitle={`${MOCK_PROCUREMENTS.length} records visible for your role`} />
       <div style={{ background: "#FFFFFF", borderRadius: 14, border: "1px solid #F1F5F9", overflow: "hidden" }}>
-        <ProcurementTable procurements={MOCK_PROCUREMENTS} title="" subtitle="" />
+        <ProcurementTable procurements={MOCK_PROCUREMENTS} title="" subtitle="" onViewProcurement={onViewProcurement} />
       </div>
     </div>
   );

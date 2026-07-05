@@ -15,6 +15,7 @@ interface SupplierDashboardProps {
   user: UserContext;
   activeTab: string;
   onTabChange: (key: string) => void;
+  onViewProcurement: (id: string) => void;
 }
 
 const myBids = [
@@ -22,13 +23,13 @@ const myBids = [
   { prId: "PR-2026-004", title: "Auditorium AV System — Management Faculty", amount: 4250000, submitted: "2026-07-01", status: "Submitted" },
 ];
 
-export function SupplierDashboard({ user, activeTab, onTabChange }: SupplierDashboardProps) {
+export function SupplierDashboard({ user, activeTab, onTabChange, onViewProcurement }: SupplierDashboardProps) {
   if (activeTab === "my-bids")    return <MyBidsPanel />;
   if (activeTab === "submit-bid") return <SubmitBidPanel onSuccess={() => onTabChange("my-bids")} />;
-  return <SupplierOverview user={user} onTabChange={onTabChange} />;
+  return <SupplierOverview user={user} onTabChange={onTabChange} onViewProcurement={onViewProcurement} />;
 }
 
-function SupplierOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k: string) => void }) {
+function SupplierOverview({ user, onTabChange, onViewProcurement }: { user: UserContext; onTabChange: (k: string) => void; onViewProcurement: (id: string) => void }) {
   const openTenders = getProcurementsForRole("SUP");
   return (
     <div style={{ padding: "28px 32px" }}>
@@ -54,6 +55,12 @@ function SupplierOverview({ user, onTabChange }: { user: UserContext; onTabChang
               <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
                 <span style={{ fontSize: 13, fontWeight: 700, color: "#B45309" }}>{formatLKR(pr.value)}</span>
                 <StatusBadge status={pr.status} />
+                <button onClick={() => onViewProcurement(pr.id)} style={{ padding: "6px 14px", background: "#F3F4F6", color: "#374151", border: "1px solid #E5E7EB", borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: "pointer" }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#7A0C0C"; (e.currentTarget as HTMLElement).style.color = "#FFF"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "#F3F4F6"; (e.currentTarget as HTMLElement).style.color = "#374151"; }}
+                >
+                  View Status
+                </button>
                 <button onClick={() => onTabChange("submit-bid")} style={{ padding: "6px 14px", background: "#F59E0B", color: "#111827", border: "none", borderRadius: 6, fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
                   Bid
                 </button>

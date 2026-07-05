@@ -81,8 +81,10 @@ export const ROLE_NAV_TABS: Record<Role, NavTab[]> = {
 export type ProcurementStatus =
   | "Pending Fund Verification"
   | "Funds Verified"
+  | "Bidding Prep"
   | "Bidding Open"
   | "Technical Evaluation"
+  | "Authority Approval"
   | "Purchase Order Issued"
   | "Awaiting Delivery"
   | "Quality Report Required"
@@ -92,6 +94,156 @@ export type ProcurementStatus =
 
 /** Procurement method */
 export type ProcurementMethod = "Shopping" | "NCB" | "ICB" | "—";
+
+/** A submitted bid entry from a supplier */
+export interface BidEntry {
+  bidderName: string;
+  bidderContact?: string;
+  amount: number;         // LKR
+  submittedAt: string;    // ISO date string
+  technicalScore?: number; // 0–100, filled after evaluation
+  financialScore?: number; // 0–100, filled after evaluation
+  isWinner?: boolean;
+  notes?: string;
+}
+
+/** A single audit-log entry for the activity timeline */
+export interface ProcurementActivityLog {
+  id: string;
+  stepIndex: number;      // 0-based step number (matches WORKFLOW_STEPS)
+  actor: string;          // name of the person
+  role: Role;
+  action: string;         // e.g. "Verified funds — Budget Code: BUDGET-2026-FAS"
+  timestamp: string;      // ISO date string
+  notes?: string;
+}
+
+/** One step in the procurement workflow */
+export interface WorkflowStep {
+  index: number;
+  label: string;
+  shortLabel: string;
+  role: Role;
+  roleLabel: string;
+  description: string;    // explanation shown in the stage card
+  waitingMessage: string; // "Waiting for [X] to [do Y]"
+  mapToStatuses: ProcurementStatus[]; // which status values map to this step being ACTIVE
+  completedByStatuses: ProcurementStatus[]; // status values that mean this step is DONE
+}
+
+/** The 10-step procurement workflow */
+export const WORKFLOW_STEPS: WorkflowStep[] = [
+  {
+    index: 0,
+    label: "Requisition Created",
+    shortLabel: "Requisition",
+    role: "HOD",
+    roleLabel: "Head of Department",
+    description: "The Head of Department has verified stock availability with the Supply Division and raised an official Purchase Requisition specifying item details, quantities, and whether goods are consumables or capital items.",
+    waitingMessage: "Waiting for HOD to submit purchase requisition",
+    mapToStatuses: ["Pending Fund Verification"],
+    completedByStatuses: ["Funds Verified", "Bidding Prep", "Bidding Open", "Technical Evaluation", "Authority Approval", "Purchase Order Issued", "Awaiting Delivery", "Quality Report Required", "Payment Pending", "Completed"],
+  },
+  {
+    index: 1,
+    label: "Fund Verification",
+    shortLabel: "Fund Check",
+    role: "BUR",
+    roleLabel: "Bursar",
+    description: "The Faculty Bursar or Main Bursar verifies that sufficient funds are allocated within the procurement plan for this requisition. A budget code is assigned and fund availability is confirmed before the process continues.",
+    waitingMessage: "Waiting for Bursar to verify and confirm budget allocation",
+    mapToStatuses: ["Pending Fund Verification"],
+    completedByStatuses: ["Funds Verified", "Bidding Prep", "Bidding Open", "Technical Evaluation", "Authority Approval", "Purchase Order Issued", "Awaiting Delivery", "Quality Report Required", "Payment Pending", "Completed"],
+  },
+  {
+    index: 2,
+    label: "Bidding Document Prep",
+    shortLabel: "Doc Prep",
+    role: "SDC",
+    roleLabel: "Supplies Division Clerk",
+    description: "The Supplies Division Clerk prepares the official bidding documentation. These documents must be formally reviewed and approved by the TEC, Procurement Committee, or Vice Chancellor before being shared externally.",
+    waitingMessage: "Waiting for SDC to prepare and obtain approval for bidding documents",
+    mapToStatuses: ["Funds Verified", "Bidding Prep"],
+    completedByStatuses: ["Bidding Open", "Technical Evaluation", "Authority Approval", "Purchase Order Issued", "Awaiting Delivery", "Quality Report Required", "Payment Pending", "Completed"],
+  },
+  {
+    index: 3,
+    label: "Bidding Open",
+    shortLabel: "Bidding",
+    role: "SDC",
+    roleLabel: "Supplies Division Clerk",
+    description: "The bidding process is officially open. External suppliers are invited to submit their sealed bids and quotations within the specified deadline. The Supplies Division Clerk coordinates this process.",
+    waitingMessage: "Waiting for suppliers to submit sealed bids before deadline",
+    mapToStatuses: ["Bidding Open"],
+    completedByStatuses: ["Technical Evaluation", "Authority Approval", "Purchase Order Issued", "Awaiting Delivery", "Quality Report Required", "Payment Pending", "Completed"],
+  },
+  {
+    index: 4,
+    label: "Bid Evaluation",
+    shortLabel: "Evaluation",
+    role: "TEC",
+    roleLabel: "TEC Members",
+    description: "The Technical Evaluation Committee conducts a preliminary, technical, and financial evaluation of all received bids. A Bid Evaluation Summary (BES) report is prepared and submitted to the appropriate approving authority.",
+    waitingMessage: "Waiting for TEC to complete technical and financial evaluation of bids",
+    mapToStatuses: ["Technical Evaluation"],
+    completedByStatuses: ["Authority Approval", "Purchase Order Issued", "Awaiting Delivery", "Quality Report Required", "Payment Pending", "Completed"],
+  },
+  {
+    index: 5,
+    label: "Authority Approval",
+    shortLabel: "Approval",
+    role: "TB",
+    roleLabel: "Tender Board / Registrar / VC",
+    description: "The BES report is forwarded for final sign-off to the appropriate authority based on the procurement value: Registrar (up to LKR 75,000), Vice Chancellor (up to LKR 1 Million), or the Tender Board (above LKR 1 Million).",
+    waitingMessage: "Waiting for authority approval of the BES evaluation report",
+    mapToStatuses: ["Authority Approval"],
+    completedByStatuses: ["Purchase Order Issued", "Awaiting Delivery", "Quality Report Required", "Payment Pending", "Completed"],
+  },
+  {
+    index: 6,
+    label: "Purchase Order",
+    shortLabel: "PO Issued",
+    role: "SDC",
+    roleLabel: "Supplies Division Clerk",
+    description: "Following authority approval, a formal Purchase Order (PO) is generated and issued to the selected supplier. The supplier is notified with delivery instructions and timeline.",
+    waitingMessage: "Waiting for SDC to generate and issue the Purchase Order",
+    mapToStatuses: ["Purchase Order Issued"],
+    completedByStatuses: ["Awaiting Delivery", "Quality Report Required", "Payment Pending", "Completed"],
+  },
+  {
+    index: 7,
+    label: "Goods Receipt",
+    shortLabel: "GRN",
+    role: "STK",
+    roleLabel: "Storekeeper",
+    description: "The supplier delivers the goods. The Storekeeper receives, counts, and inspects the items, then issues an official Goods Received Note (GRN) documenting the received quantities and condition.",
+    waitingMessage: "Waiting for Storekeeper to receive goods and issue GRN",
+    mapToStatuses: ["Awaiting Delivery"],
+    completedByStatuses: ["Quality Report Required", "Payment Pending", "Completed"],
+  },
+  {
+    index: 8,
+    label: "Quality Report",
+    shortLabel: "Quality",
+    role: "HOD",
+    roleLabel: "Acceptance Committee / HOD",
+    description: "The Acceptance Committee conducts a formal quality inspection of the received goods. An official Quality/Good Received Note report is issued confirming that all items meet the required specifications.",
+    waitingMessage: "Waiting for HOD / Acceptance Committee to submit quality inspection report",
+    mapToStatuses: ["Quality Report Required"],
+    completedByStatuses: ["Payment Pending", "Completed"],
+  },
+  {
+    index: 9,
+    label: "Payment",
+    shortLabel: "Payment",
+    role: "FIN",
+    roleLabel: "Finance Division",
+    description: "The complete payment packet (invoices, GRN records, and the verified quality report) is forwarded to the Finance Division, who processes the final payment to the supplier and closes the procurement.",
+    waitingMessage: "Waiting for Finance Division to process final supplier payment",
+    mapToStatuses: ["Payment Pending"],
+    completedByStatuses: ["Completed"],
+  },
+];
 
 /** A single procurement record */
 export interface Procurement {
@@ -105,6 +257,12 @@ export interface Procurement {
   updatedAt: string;    // ISO date string
   submittedBy?: string;
   description?: string;
+  supplierName?: string;   // populated after PO issued
+  poNumber?: string;       // populated after PO issued
+  budgetCode?: string;     // populated after fund verification
+  grnNumber?: string;      // populated after GRN issued
+  activityLog?: ProcurementActivityLog[];
+  bids?: BidEntry[];
 }
 
 /** Logged-in user context */

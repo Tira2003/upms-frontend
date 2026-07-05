@@ -17,11 +17,12 @@ interface TBDashboardProps {
   user: UserContext;
   activeTab: string;
   onTabChange: (key: string) => void;
+  onViewProcurement: (id: string) => void;
 }
 
-export function TBDashboard({ user, activeTab, onTabChange }: TBDashboardProps) {
+export function TBDashboard({ user, activeTab, onTabChange, onViewProcurement }: TBDashboardProps) {
   if (activeTab === "approvals")    return <ApprovalsPanel />;
-  if (activeTab === "procurements") return <AllProcurementsPanel />;
+  if (activeTab === "procurements") return <AllProcurementsPanel onViewProcurement={onViewProcurement} />;
   return <TBOverview user={user} onTabChange={onTabChange} />;
 }
 
@@ -113,14 +114,14 @@ function ApprovalsPanel() {
   );
 }
 
-function AllProcurementsPanel() {
+function AllProcurementsPanel({ onViewProcurement }: { onViewProcurement: (id: string) => void }) {
   return (
     <div style={{ padding: "28px 32px" }}>
       <div style={{ marginBottom: 20 }}>
         <h1 style={{ fontSize: 18, fontWeight: 700, color: "#111827", margin: 0, marginBottom: 2 }}>All Procurements</h1>
         <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>{MOCK_PROCUREMENTS.length} records</p>
       </div>
-      <ProcurementTable procurements={MOCK_PROCUREMENTS} title="" subtitle="" />
+      <ProcurementTable procurements={MOCK_PROCUREMENTS} title="" subtitle="" onViewProcurement={onViewProcurement} />
     </div>
   );
 }

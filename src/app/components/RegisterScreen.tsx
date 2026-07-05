@@ -175,26 +175,7 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
             Sign up to get started
           </p>
 
-          {/* SSO */}
-          <button
-            type="button"
-            className="w-full py-2.5 rounded-lg flex items-center justify-center gap-2 mb-2.5 bg-white border border-stone-200 text-maroon font-semibold text-[0.88rem] hover:border-maroon hover:bg-stone-50 transition-all"
-          >
-            <svg width="16" height="16" viewBox="0 0 21 21" fill="none">
-              <rect x="1" y="1" width="9" height="9" fill="#F25022" />
-              <rect x="11" y="1" width="9" height="9" fill="#7FBA00" />
-              <rect x="1" y="11" width="9" height="9" fill="#00A4EF" />
-              <rect x="11" y="11" width="9" height="9" fill="#FFB900" />
-            </svg>
-            Continue with Microsoft Outlook
-          </button>
-          
-          {/* Divider */}
-          <div className="flex items-center gap-3 my-5">
-            <div className="flex-1 h-px bg-stone-200" />
-            <span className="text-stone-400 text-[0.78rem]">or</span>
-            <div className="flex-1 h-px bg-stone-200" />
-          </div>
+
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-3">

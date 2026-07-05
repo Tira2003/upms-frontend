@@ -1,6 +1,5 @@
 import { useState } from "react";
 import type { Role, UserContext } from "./types";
-import { ROLE_META } from "./types";
 import { Sidebar } from "./components/Sidebar";
 import { ContentHeader } from "./components/ContentHeader";
 import { HODDashboard } from "./views/HODDashboard";
@@ -11,6 +10,8 @@ import { TBDashboard } from "./views/TBDashboard";
 import { StorekeeperDashboard } from "./views/StorekeeperDashboard";
 import { SupplierDashboard } from "./views/SupplierDashboard";
 import { FinanceDashboard } from "./views/FinanceDashboard";
+import { ProcurementStatusTracker } from "./components/ProcurementStatusTracker";
+import { MOCK_PROCUREMENTS } from "./data";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DashboardLayout — sidebar + main content shell
@@ -30,20 +31,21 @@ const DEMO_USERS: Record<Role, UserContext> = {
 
 /** Map nav key → page title for the breadcrumb header */
 const PAGE_TITLES: Record<string, { title: string; subtitle: string }> = {
-  "dashboard":         { title: "Overview",          subtitle: "Here is the summary of overall data" },
-  "new-requisition":   { title: "New Requisition",   subtitle: "Create a new purchase requisition" },
-  "procurements":      { title: "All Procurements",  subtitle: "Full list of procurement records" },
-  "quality-report":    { title: "Quality Reports",   subtitle: "Submit quality inspection reports" },
-  "fund-verification": { title: "Fund Verification", subtitle: "Verify budget availability" },
-  "method":            { title: "Method Selection",  subtitle: "Select procurement method for verified requisitions" },
-  "suppliers":         { title: "Suppliers",         subtitle: "Registered supplier directory" },
-  "bidding":           { title: "Bidding",           subtitle: "Manage bid openings and supplier invitations" },
-  "evaluations":       { title: "Evaluations",       subtitle: "Technical and financial bid evaluation" },
-  "approvals":         { title: "Approvals",         subtitle: "Review BES reports and authorise POs" },
-  "grn":               { title: "GRN",               subtitle: "Generate goods received notes" },
-  "my-bids":           { title: "My Bids",           subtitle: "Track your submitted bids" },
-  "submit-bid":        { title: "Submit Bid",        subtitle: "Submit a sealed bid for an open tender" },
-  "payments":          { title: "Payments",          subtitle: "Process payments after quality report approval" },
+  "dashboard":         { title: "Overview",             subtitle: "Here is the summary of overall data" },
+  "new-requisition":   { title: "New Requisition",      subtitle: "Create a new purchase requisition" },
+  "procurements":      { title: "All Procurements",     subtitle: "Full list of procurement records" },
+  "status-tracker":    { title: "Procurement Tracker",  subtitle: "Step-by-step status and activity log" },
+  "quality-report":    { title: "Quality Reports",      subtitle: "Submit quality inspection reports" },
+  "fund-verification": { title: "Fund Verification",    subtitle: "Verify budget availability" },
+  "method":            { title: "Method Selection",     subtitle: "Select procurement method for verified requisitions" },
+  "suppliers":         { title: "Suppliers",            subtitle: "Registered supplier directory" },
+  "bidding":           { title: "Bidding",              subtitle: "Manage bid openings and supplier invitations" },
+  "evaluations":       { title: "Evaluations",          subtitle: "Technical and financial bid evaluation" },
+  "approvals":         { title: "Approvals",            subtitle: "Review BES reports and authorise POs" },
+  "grn":               { title: "GRN",                  subtitle: "Generate goods received notes" },
+  "my-bids":           { title: "My Bids",              subtitle: "Track your submitted bids" },
+  "submit-bid":        { title: "Submit Bid",           subtitle: "Submit a sealed bid for an open tender" },
+  "payments":          { title: "Payments",             subtitle: "Process payments after quality report approval" },
 };
 
 interface DashboardLayoutProps {
@@ -54,6 +56,23 @@ interface DashboardLayoutProps {
 export function DashboardLayout({ role, onLogout }: DashboardLayoutProps) {
   const user = DEMO_USERS[role];
   const [activeKey, setActiveKey] = useState<string>("dashboard");
+  const [selectedProcurementId, setSelectedProcurementId] = useState<string | null>(null);
+
+  // When a user clicks "View" on a procurement row, navigate to the tracker
+  const handleViewProcurement = (id: string) => {
+    setSelectedProcurementId(id);
+    setActiveKey("status-tracker");
+  };
+
+  // When navigating away from tracker via sidebar, clear selected
+  const handleNavigate = (key: string) => {
+    if (key !== "status-tracker") setSelectedProcurementId(null);
+    setActiveKey(key);
+  };
+
+  const selectedProcurement = selectedProcurementId
+    ? MOCK_PROCUREMENTS.find(p => p.id === selectedProcurementId) ?? null
+    : null;
 
   const pageInfo = PAGE_TITLES[activeKey] ?? { title: activeKey, subtitle: "" };
 
@@ -71,7 +90,7 @@ export function DashboardLayout({ role, onLogout }: DashboardLayoutProps) {
       <Sidebar
         user={user}
         activeKey={activeKey}
-        onNavigate={setActiveKey}
+        onNavigate={handleNavigate}
         onSignOut={onLogout}
       />
 
@@ -92,29 +111,38 @@ export function DashboardLayout({ role, onLogout }: DashboardLayoutProps) {
             background: "#F7F8FA",
           }}
         >
-          {role === "HOD" && (
-            <HODDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} />
+          {/* ── Procurement Status Tracker (shared across all roles) ── */}
+          {activeKey === "status-tracker" && selectedProcurement && (
+            <ProcurementStatusTracker
+              procurement={selectedProcurement}
+              onBack={() => { setActiveKey("procurements"); setSelectedProcurementId(null); }}
+            />
           )}
-          {role === "BUR" && (
-            <BursarDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} />
+
+          {/* ── Role-specific views ── */}
+          {activeKey !== "status-tracker" && role === "HOD" && (
+            <HODDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} />
           )}
-          {role === "SDC" && (
-            <SDCDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} />
+          {activeKey !== "status-tracker" && role === "BUR" && (
+            <BursarDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} />
           )}
-          {role === "TEC" && (
-            <TECDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} />
+          {activeKey !== "status-tracker" && role === "SDC" && (
+            <SDCDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} />
           )}
-          {role === "TB" && (
-            <TBDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} />
+          {activeKey !== "status-tracker" && role === "TEC" && (
+            <TECDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} />
           )}
-          {role === "STK" && (
-            <StorekeeperDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} />
+          {activeKey !== "status-tracker" && role === "TB" && (
+            <TBDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} />
           )}
-          {role === "SUP" && (
-            <SupplierDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} />
+          {activeKey !== "status-tracker" && role === "STK" && (
+            <StorekeeperDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} />
           )}
-          {role === "FIN" && (
-            <FinanceDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} />
+          {activeKey !== "status-tracker" && role === "SUP" && (
+            <SupplierDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} />
+          )}
+          {activeKey !== "status-tracker" && role === "FIN" && (
+            <FinanceDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} />
           )}
         </main>
 

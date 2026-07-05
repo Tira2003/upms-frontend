@@ -12,6 +12,7 @@ interface ProcurementTableProps {
   title?: string;
   subtitle?: string;
   onRowClick?: (pr: Procurement) => void;
+  onViewProcurement?: (id: string) => void;
   showMethod?: boolean;
 }
 
@@ -31,6 +32,7 @@ export function ProcurementTable({
   title = "Procurements",
   subtitle,
   onRowClick,
+  onViewProcurement,
   showMethod = true,
 }: ProcurementTableProps) {
   const [hoveredRow, setHoveredRow] = useState<string | null>(null);
@@ -64,7 +66,7 @@ export function ProcurementTable({
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ background: "#F9FAFB" }}>
-              {["ID", "Title", "Faculty", "Value", ...(showMethod ? ["Method"] : []), "Status", "Updated"].map(h => (
+              {["ID", "Title", "Faculty", "Value", ...(showMethod ? ["Method"] : []), "Status", "Updated", ""].map(h => (
                 <th
                   key={h}
                   style={{
@@ -156,6 +158,39 @@ export function ProcurementTable({
                   <span style={{ fontSize: 11, color: "#9CA3AF" }}>
                     {formatDate(pr.updatedAt)}
                   </span>
+                </td>
+
+                {/* View action */}
+                <td style={{ padding: "13px 16px 13px 8px", whiteSpace: "nowrap" }}>
+                  {onViewProcurement && (
+                    <button
+                      onClick={e => { e.stopPropagation(); onViewProcurement(pr.id); }}
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 700,
+                        padding: "5px 12px",
+                        background: "#F3F4F6",
+                        color: "#374151",
+                        border: "1px solid #E5E7EB",
+                        borderRadius: 7,
+                        cursor: "pointer",
+                        transition: "all 0.15s",
+                        letterSpacing: "0.02em",
+                      }}
+                      onMouseEnter={e => {
+                        (e.currentTarget as HTMLElement).style.background = "#7A0C0C";
+                        (e.currentTarget as HTMLElement).style.color = "#FFFFFF";
+                        (e.currentTarget as HTMLElement).style.borderColor = "#7A0C0C";
+                      }}
+                      onMouseLeave={e => {
+                        (e.currentTarget as HTMLElement).style.background = "#F3F4F6";
+                        (e.currentTarget as HTMLElement).style.color = "#374151";
+                        (e.currentTarget as HTMLElement).style.borderColor = "#E5E7EB";
+                      }}
+                    >
+                      View Status →
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

@@ -15,11 +15,12 @@ interface StorekeeperDashboardProps {
   user: UserContext;
   activeTab: string;
   onTabChange: (key: string) => void;
+  onViewProcurement: (id: string) => void;
 }
 
-export function StorekeeperDashboard({ user, activeTab, onTabChange }: StorekeeperDashboardProps) {
+export function StorekeeperDashboard({ user, activeTab, onTabChange, onViewProcurement }: StorekeeperDashboardProps) {
   if (activeTab === "grn")          return <GRNPanel />;
-  if (activeTab === "procurements") return <AllProcurementsPanel />;
+  if (activeTab === "procurements") return <AllProcurementsPanel onViewProcurement={onViewProcurement} />;
   return <STKOverview user={user} onTabChange={onTabChange} />;
 }
 
@@ -117,14 +118,14 @@ function GRNPanel() {
   );
 }
 
-function AllProcurementsPanel() {
+function AllProcurementsPanel({ onViewProcurement }: { onViewProcurement: (id: string) => void }) {
   return (
     <div style={{ padding: "28px 32px" }}>
       <div style={{ marginBottom: 20 }}>
         <h1 style={{ fontSize: 18, fontWeight: 700, color: "#111827", margin: 0, marginBottom: 2 }}>All Procurements</h1>
         <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>{MOCK_PROCUREMENTS.length} records</p>
       </div>
-      <ProcurementTable procurements={MOCK_PROCUREMENTS} title="" subtitle="" />
+      <ProcurementTable procurements={MOCK_PROCUREMENTS} title="" subtitle="" onViewProcurement={onViewProcurement} />
     </div>
   );
 }

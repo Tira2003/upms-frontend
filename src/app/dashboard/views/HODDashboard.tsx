@@ -17,11 +17,12 @@ interface HODDashboardProps {
   user: UserContext;
   activeTab: string;
   onTabChange: (key: string) => void;
+  onViewProcurement: (id: string) => void;
 }
 
-export function HODDashboard({ user, activeTab, onTabChange }: HODDashboardProps) {
+export function HODDashboard({ user, activeTab, onTabChange, onViewProcurement }: HODDashboardProps) {
   if (activeTab === "new-requisition") return <NewRequisitionPanel onSubmit={() => onTabChange("dashboard")} user={user} />;
-  if (activeTab === "procurements")    return <AllProcurementsPanel />;
+  if (activeTab === "procurements")    return <AllProcurementsPanel onViewProcurement={onViewProcurement} />;
   if (activeTab === "quality-report")  return <QualityReportPanel />;
   return <HODOverview user={user} onTabChange={onTabChange} />;
 }
@@ -868,12 +869,12 @@ const mInput = (hasError: boolean): React.CSSProperties => ({
   transition: "border-color 0.2s",
 });
 
-function AllProcurementsPanel() {
+function AllProcurementsPanel({ onViewProcurement }: { onViewProcurement: (id: string) => void }) {
   return (
     <div style={{ padding: "28px 28px" }}>
       <PageTitleBar title="All Procurements" subtitle={`${MOCK_PROCUREMENTS.length} records visible for your role`} />
       <div style={{ background: "#FFFFFF", borderRadius: 14, border: "1px solid #F1F5F9", overflow: "hidden" }}>
-        <ProcurementTable procurements={MOCK_PROCUREMENTS} title="" subtitle="" />
+        <ProcurementTable procurements={MOCK_PROCUREMENTS} title="" subtitle="" onViewProcurement={onViewProcurement} />
       </div>
     </div>
   );
