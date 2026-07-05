@@ -18,12 +18,13 @@ interface HODDashboardProps {
   activeTab: string;
   onTabChange: (key: string) => void;
   onViewProcurement: (id: string) => void;
+  onViewProcurementDetails: (id: string) => void;
 }
 
-export function HODDashboard({ user, activeTab, onTabChange, onViewProcurement }: HODDashboardProps) {
-  if (activeTab === "new-requisition") return <NewRequisitionPanel onSubmit={() => onTabChange("dashboard")} user={user} />;
+export function HODDashboard({ user, activeTab, onTabChange, onViewProcurement, onViewProcurementDetails }: HODDashboardProps) {
+  if (activeTab === "new-requisition") return <NewRequisitionPanel onSubmit={() => onTabChange("dashboard")} onViewProcurement={onViewProcurement} user={user} />;
   if (activeTab === "procurements")    return <AllProcurementsPanel onViewProcurement={onViewProcurement} />;
-  if (activeTab === "quality-report")  return <QualityReportPanel />;
+  if (activeTab === "quality-report")  return <QualityReportPanel onViewProcurementDetails={onViewProcurementDetails} />;
   return <HODOverview user={user} onTabChange={onTabChange} />;
 }
 
@@ -444,7 +445,7 @@ interface ReqForm {
   signature: string;
 }
 
-function NewRequisitionPanel({ onSubmit, user }: { onSubmit: () => void; user?: { name?: string; title?: string; department?: string; faculty?: string } }) {
+function NewRequisitionPanel({ onSubmit, onViewProcurement, user }: { onSubmit: () => void; onViewProcurement: (id: string) => void; user?: { name?: string; title?: string; department?: string; faculty?: string } }) {
   const hodName = user?.name ?? "Dr. Nimal Perera";
 
   const [step, setStep]       = useState(0);
@@ -499,34 +500,83 @@ function NewRequisitionPanel({ onSubmit, user }: { onSubmit: () => void; user?: 
 
   // ── Success screen ──────────────────────────────────────────────────────────
   if (submitted) {
+    // In a real system we'd get the new PR ID from the server response.
+    // For the demo we use the most recently created mock record as a stand-in.
+    const newPrId = "PR-2026-001";
     return (
-      <div style={{ padding: "28px 28px" }}>
-        <div style={{
-          maxWidth: 540,
-          margin: "40px auto",
-          background: "#FFFFFF",
-          borderRadius: 18,
-          padding: "48px 40px",
-          textAlign: "center",
-          border: "1px solid #F1F5F9",
-          boxShadow: "0 4px 24px rgba(0,0,0,0.07)",
-        }}>
-          <div style={{
-            width: 72, height: 72, borderRadius: "50%",
-            background: "linear-gradient(135deg,#7A0C0C,#C53030)",
-            margin: "0 auto 20px",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 32, boxShadow: "0 8px 24px rgba(122,12,12,0.25)",
-          }}>✅</div>
-          <h3 style={{ fontSize: 20, fontWeight: 800, color: "#111827", margin: "0 0 8px" }}>Requisition Submitted!</h3>
-          <p style={{ fontSize: 13, color: "#6B7280", margin: "0 0 6px" }}>
-            <strong style={{ color: "#374151" }}>{form.title}</strong>
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "75vh",
+        textAlign: "center",
+        padding: "40px",
+        boxSizing: "border-box",
+      }}>
+        <div style={{ maxWidth: 560, display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <h2 style={{ fontSize: 26, fontWeight: 800, color: "#111827", margin: "0 0 10px", letterSpacing: "-0.02em" }}>
+            Requisition Submitted!
+          </h2>
+
+          <p style={{ fontSize: 15, fontWeight: 600, color: "#374151", margin: "0 0 16px" }}>
+            {form.title}
           </p>
-          <p style={{ fontSize: 12, color: "#9CA3AF", margin: "0 0 28px" }}>Sent to the Bursar for fund verification.</p>
-          <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
+
+          {/* Workflow next-step hint */}
+          <div style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            background: "#FFFBEB",
+            border: "1px solid #FDE68A",
+            borderRadius: 10,
+            padding: "10px 16px",
+            marginBottom: 36,
+            fontSize: 12,
+            color: "#92400E",
+            fontWeight: 600,
+          }}>
+            Next step — Bursar will verify budget allocation
+          </div>
+
+          {/* Action buttons */}
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+            <button
+              onClick={() => onViewProcurement(newPrId)}
+              style={{
+                padding: "11px 24px",
+                background: "#7A0C0C",
+                color: "#FFFFFF",
+                border: "none",
+                borderRadius: 10,
+                fontSize: 13,
+                fontWeight: 700,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = "#9B1515")}
+              onMouseLeave={e => (e.currentTarget.style.background = "#7A0C0C")}
+            >
+              Track Request Status
+            </button>
+
             <button
               onClick={onSubmit}
-              style={{ padding: "11px 28px", background: "#7A0C0C", color: "#FFFFFF", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer" }}
+              style={{
+                padding: "11px 24px",
+                background: "#F3F4F6",
+                color: "#374151",
+                border: "1.5px solid #9CA3AF",
+                borderRadius: 10,
+                fontSize: 13,
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+              onMouseEnter={e => (e.currentTarget.style.background = "#E5E7EB")}
+              onMouseLeave={e => (e.currentTarget.style.background = "#F3F4F6")}
             >
               Back to Dashboard
             </button>
@@ -880,7 +930,7 @@ function AllProcurementsPanel({ onViewProcurement }: { onViewProcurement: (id: s
   );
 }
 
-function QualityReportPanel() {
+function QualityReportPanel({ onViewProcurementDetails }: { onViewProcurementDetails: (id: string) => void }) {
   const needsReport = MOCK_PROCUREMENTS.filter(p => p.status === "Quality Report Required");
   return (
     <div style={{ padding: "28px 28px" }}>
@@ -894,7 +944,22 @@ function QualityReportPanel() {
               <div>
                 <span style={{ fontSize: 12, fontWeight: 700, color: "#2563EB", fontFamily: "monospace" }}>{pr.id}</span>
                 <h3 style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: "4px 0" }}>{pr.title}</h3>
-                <p style={{ fontSize: 12, color: "#6B7280", margin: 0 }}>{pr.faculty} · {formatLKR(pr.value)}</p>
+                <p style={{ fontSize: 12, color: "#6B7280", margin: "0 0 10px" }}>{pr.faculty} · {formatLKR(pr.value)}</p>
+                <button
+                  onClick={() => onViewProcurementDetails(pr.id)}
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 700,
+                    padding: "5px 12px",
+                    background: "#F3F4F6",
+                    color: "#374151",
+                    border: "1px solid #E5E7EB",
+                    borderRadius: 7,
+                    cursor: "pointer",
+                  }}
+                >
+                  View Details
+                </button>
               </div>
               <button style={{ padding: "9px 20px", background: "#7A0C0C", color: "#FFFFFF", border: "none", borderRadius: 9, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>Submit Report</button>
             </div>

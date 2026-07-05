@@ -16,10 +16,11 @@ interface StorekeeperDashboardProps {
   activeTab: string;
   onTabChange: (key: string) => void;
   onViewProcurement: (id: string) => void;
+  onViewProcurementDetails: (id: string) => void;
 }
 
-export function StorekeeperDashboard({ user, activeTab, onTabChange, onViewProcurement }: StorekeeperDashboardProps) {
-  if (activeTab === "grn")          return <GRNPanel />;
+export function StorekeeperDashboard({ user, activeTab, onTabChange, onViewProcurement, onViewProcurementDetails }: StorekeeperDashboardProps) {
+  if (activeTab === "grn")          return <GRNPanel onViewProcurementDetails={onViewProcurementDetails} />;
   if (activeTab === "procurements") return <AllProcurementsPanel onViewProcurement={onViewProcurement} />;
   return <STKOverview user={user} onTabChange={onTabChange} />;
 }
@@ -35,7 +36,7 @@ function STKOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k
   );
 }
 
-function GRNPanel() {
+function GRNPanel({ onViewProcurementDetails }: { onViewProcurementDetails: (id: string) => void }) {
   const deliveries = MOCK_PROCUREMENTS.filter(p => p.status === "Awaiting Delivery");
   const [issued, setIssued] = useState<Set<string>>(new Set());
   const [grns, setGrns] = useState<Record<string, { qty: string; condition: string; note: string }>>({});
@@ -70,7 +71,22 @@ function GRNPanel() {
                   <div>
                     <span style={{ fontSize: 12, fontWeight: 700, color: "#2563EB", fontFamily: "monospace" }}>{pr.id}</span>
                     <h3 style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: "4px 0" }}>{pr.title}</h3>
-                    <p style={{ fontSize: 12, color: "#6B7280", margin: 0 }}>{pr.faculty} · {formatLKR(pr.value)}</p>
+                    <p style={{ fontSize: 12, color: "#6B7280", margin: "0 0 10px" }}>{pr.faculty} · {formatLKR(pr.value)}</p>
+                    <button
+                      onClick={() => onViewProcurementDetails(pr.id)}
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 700,
+                        padding: "5px 12px",
+                        background: "#F3F4F6",
+                        color: "#374151",
+                        border: "1px solid #E5E7EB",
+                        borderRadius: 7,
+                        cursor: "pointer",
+                      }}
+                    >
+                      View Details
+                    </button>
                   </div>
                   {done && (
                     <span style={{ fontSize: 11, fontWeight: 700, padding: "4px 12px", borderRadius: 20, background: "#F0FDF4", color: "#15803D", border: "1px solid #BBF7D0" }}>

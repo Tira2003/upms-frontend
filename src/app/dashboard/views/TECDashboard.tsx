@@ -17,10 +17,11 @@ interface TECDashboardProps {
   activeTab: string;
   onTabChange: (key: string) => void;
   onViewProcurement: (id: string) => void;
+  onViewProcurementDetails: (id: string) => void;
 }
 
-export function TECDashboard({ user, activeTab, onTabChange, onViewProcurement }: TECDashboardProps) {
-  if (activeTab === "evaluations")  return <EvaluationsPanel />;
+export function TECDashboard({ user, activeTab, onTabChange, onViewProcurement, onViewProcurementDetails }: TECDashboardProps) {
+  if (activeTab === "evaluations")  return <EvaluationsPanel onViewProcurementDetails={onViewProcurementDetails} />;
   if (activeTab === "procurements") return <AllProcurementsPanel onViewProcurement={onViewProcurement} />;
   return <TECOverview user={user} onTabChange={onTabChange} />;
 }
@@ -44,7 +45,7 @@ function TECOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k
   );
 }
 
-function EvaluationsPanel() {
+function EvaluationsPanel({ onViewProcurementDetails }: { onViewProcurementDetails: (id: string) => void }) {
   const items = MOCK_PROCUREMENTS.filter(p => p.status === "Technical Evaluation");
   const [selected, setSelected] = useState(items[0] ?? null);
   const [scores, setScores] = useState({ technical: "", financial: "", compliance: "" });
@@ -75,8 +76,27 @@ function EvaluationsPanel() {
 
           {selected && (
             <div style={{ background: "#FFFFFF", border: "1px solid #E5E7EB", borderRadius: 10, padding: "24px" }}>
-              <h3 style={{ fontSize: 14, fontWeight: 700, margin: 0, marginBottom: 4 }}>{selected.title}</h3>
-              <p style={{ fontSize: 12, color: "#6B7280", margin: 0, marginBottom: 20 }}>{selected.id} · {selected.faculty} · {formatLKR(selected.value)}</p>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+                <div>
+                  <h3 style={{ fontSize: 14, fontWeight: 700, margin: 0, marginBottom: 4 }}>{selected.title}</h3>
+                  <p style={{ fontSize: 12, color: "#6B7280", margin: 0 }}>{selected.id} · {selected.faculty} · {formatLKR(selected.value)}</p>
+                </div>
+                <button
+                  onClick={() => onViewProcurementDetails(selected.id)}
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 700,
+                    padding: "6px 14px",
+                    background: "#F3F4F6",
+                    color: "#374151",
+                    border: "1px solid #E5E7EB",
+                    borderRadius: 7,
+                    cursor: "pointer",
+                  }}
+                >
+                  View Details
+                </button>
+              </div>
 
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 {[["Technical Score (0–100)", "technical"], ["Financial Score (0–100)", "financial"], ["Compliance Score (0–100)", "compliance"]].map(([label, key]) => (

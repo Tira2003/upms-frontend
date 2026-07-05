@@ -18,10 +18,11 @@ interface TBDashboardProps {
   activeTab: string;
   onTabChange: (key: string) => void;
   onViewProcurement: (id: string) => void;
+  onViewProcurementDetails: (id: string) => void;
 }
 
-export function TBDashboard({ user, activeTab, onTabChange, onViewProcurement }: TBDashboardProps) {
-  if (activeTab === "approvals")    return <ApprovalsPanel />;
+export function TBDashboard({ user, activeTab, onTabChange, onViewProcurement, onViewProcurementDetails }: TBDashboardProps) {
+  if (activeTab === "approvals")    return <ApprovalsPanel onViewProcurementDetails={onViewProcurementDetails} />;
   if (activeTab === "procurements") return <AllProcurementsPanel onViewProcurement={onViewProcurement} />;
   return <TBOverview user={user} onTabChange={onTabChange} />;
 }
@@ -45,7 +46,7 @@ function TBOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k:
   );
 }
 
-function ApprovalsPanel() {
+function ApprovalsPanel({ onViewProcurementDetails }: { onViewProcurementDetails: (id: string) => void }) {
   const items = MOCK_PROCUREMENTS.filter(p => p.status === "Technical Evaluation");
   const [decisions, setDecisions] = useState<Record<string, "approved" | "rejected">>({});
 
@@ -80,7 +81,22 @@ function ApprovalsPanel() {
                   <div>
                     <span style={{ fontSize: 12, fontWeight: 700, color: "#2563EB", fontFamily: "monospace" }}>{pr.id}</span>
                     <h3 style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: "4px 0" }}>{pr.title}</h3>
-                    <p style={{ fontSize: 12, color: "#6B7280", margin: 0 }}>{pr.faculty} · {formatLKR(pr.value)} · Method: {pr.method}</p>
+                    <p style={{ fontSize: 12, color: "#6B7280", margin: "0 0 10px" }}>{pr.faculty} · {formatLKR(pr.value)} · Method: {pr.method}</p>
+                    <button
+                      onClick={() => onViewProcurementDetails(pr.id)}
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 700,
+                        padding: "5px 12px",
+                        background: "#F3F4F6",
+                        color: "#374151",
+                        border: "1px solid #E5E7EB",
+                        borderRadius: 7,
+                        cursor: "pointer",
+                      }}
+                    >
+                      View Details
+                    </button>
                   </div>
                   {decision ? (
                     <StatusBadge status={decision === "approved" ? "Purchase Order Issued" : "Rejected"} size="md" />

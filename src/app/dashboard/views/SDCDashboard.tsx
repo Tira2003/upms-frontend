@@ -16,12 +16,13 @@ interface SDCDashboardProps {
   activeTab: string;
   onTabChange: (key: string) => void;
   onViewProcurement: (id: string) => void;
+  onViewProcurementDetails: (id: string) => void;
 }
 
-export function SDCDashboard({ user, activeTab, onTabChange, onViewProcurement }: SDCDashboardProps) {
-  if (activeTab === "method")       return <MethodSelectionPanel />;
+export function SDCDashboard({ user, activeTab, onTabChange, onViewProcurement, onViewProcurementDetails }: SDCDashboardProps) {
+  if (activeTab === "method")       return <MethodSelectionPanel onViewProcurementDetails={onViewProcurementDetails} />;
   if (activeTab === "suppliers")    return <SuppliersPanel />;
-  if (activeTab === "bidding")      return <BiddingPanel />;
+  if (activeTab === "bidding")      return <BiddingPanel onViewProcurement={onViewProcurement} />;
   if (activeTab === "procurements") return <AllProcurementsPanel onViewProcurement={onViewProcurement} />;
   return <SDCOverview user={user} onTabChange={onTabChange} />;
 }
@@ -60,7 +61,7 @@ function SDCOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k
   );
 }
 
-function MethodSelectionPanel() {
+function MethodSelectionPanel({ onViewProcurementDetails }: { onViewProcurementDetails: (id: string) => void }) {
   const eligible = MOCK_PROCUREMENTS.filter(p => p.status === "Funds Verified");
   return (
     <div style={{ padding: "28px 32px" }}>
@@ -75,9 +76,26 @@ function MethodSelectionPanel() {
           {eligible.map(pr => (
             <div key={pr.id} style={{ background: "#FFFFFF", border: "1px solid #E5E7EB", borderRadius: 8, padding: "16px 20px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: "#2563EB", fontFamily: "monospace" }}>{pr.id}</span>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: "#111827", marginLeft: 10 }}>{pr.title}</span>
+                <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                  <div>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: "#2563EB", fontFamily: "monospace" }}>{pr.id}</span>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: "#111827", marginLeft: 10 }}>{pr.title}</span>
+                  </div>
+                  <button
+                    onClick={() => onViewProcurementDetails(pr.id)}
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 700,
+                      padding: "4px 10px",
+                      background: "#F3F4F6",
+                      color: "#374151",
+                      border: "1px solid #E5E7EB",
+                      borderRadius: 5,
+                      cursor: "pointer",
+                    }}
+                  >
+                    View Details
+                  </button>
                 </div>
                 <div style={{ display: "flex", gap: 8 }}>
                   {["Shopping", "NCB", "ICB"].map(m => (
@@ -150,7 +168,7 @@ function SuppliersPanel() {
   );
 }
 
-function BiddingPanel() {
+function BiddingPanel({ onViewProcurement }: { onViewProcurement: (id: string) => void }) {
   const biddingItems = MOCK_PROCUREMENTS.filter(p => p.status === "Bidding Open" || p.status === "Funds Verified");
 
   return (
@@ -159,7 +177,7 @@ function BiddingPanel() {
         <h1 style={{ fontSize: 18, fontWeight: 700, color: "#111827", margin: 0, marginBottom: 2 }}>Bidding</h1>
         <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>Manage bid openings and supplier invitations</p>
       </div>
-      <ProcurementTable procurements={biddingItems} title="Active Bids" subtitle="Coordinate bid openings" />
+      <ProcurementTable procurements={biddingItems} title="Active Bids" subtitle="Coordinate bid openings" onViewProcurement={onViewProcurement} />
     </div>
   );
 }

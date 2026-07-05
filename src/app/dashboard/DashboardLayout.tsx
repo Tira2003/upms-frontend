@@ -11,6 +11,7 @@ import { StorekeeperDashboard } from "./views/StorekeeperDashboard";
 import { SupplierDashboard } from "./views/SupplierDashboard";
 import { FinanceDashboard } from "./views/FinanceDashboard";
 import { ProcurementStatusTracker } from "./components/ProcurementStatusTracker";
+import { ProcurementDetails } from "./components/ProcurementDetails";
 import { MOCK_PROCUREMENTS } from "./data";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -31,21 +32,22 @@ const DEMO_USERS: Record<Role, UserContext> = {
 
 /** Map nav key → page title for the breadcrumb header */
 const PAGE_TITLES: Record<string, { title: string; subtitle: string }> = {
-  "dashboard":         { title: "Overview",             subtitle: "Here is the summary of overall data" },
-  "new-requisition":   { title: "New Requisition",      subtitle: "Create a new purchase requisition" },
-  "procurements":      { title: "All Procurements",     subtitle: "Full list of procurement records" },
-  "status-tracker":    { title: "Procurement Tracker",  subtitle: "Step-by-step status and activity log" },
-  "quality-report":    { title: "Quality Reports",      subtitle: "Submit quality inspection reports" },
-  "fund-verification": { title: "Fund Verification",    subtitle: "Verify budget availability" },
-  "method":            { title: "Method Selection",     subtitle: "Select procurement method for verified requisitions" },
-  "suppliers":         { title: "Suppliers",            subtitle: "Registered supplier directory" },
-  "bidding":           { title: "Bidding",              subtitle: "Manage bid openings and supplier invitations" },
-  "evaluations":       { title: "Evaluations",          subtitle: "Technical and financial bid evaluation" },
-  "approvals":         { title: "Approvals",            subtitle: "Review BES reports and authorise POs" },
-  "grn":               { title: "GRN",                  subtitle: "Generate goods received notes" },
-  "my-bids":           { title: "My Bids",              subtitle: "Track your submitted bids" },
-  "submit-bid":        { title: "Submit Bid",           subtitle: "Submit a sealed bid for an open tender" },
-  "payments":          { title: "Payments",             subtitle: "Process payments after quality report approval" },
+  "dashboard":           { title: "Overview",             subtitle: "Here is the summary of overall data" },
+  "new-requisition":     { title: "New Requisition",      subtitle: "Create a new purchase requisition" },
+  "procurements":        { title: "All Procurements",     subtitle: "Full list of procurement records" },
+  "status-tracker":      { title: "Procurement Tracker",  subtitle: "Step-by-step status and activity log" },
+  "procurement-details": { title: "Procurement Details",  subtitle: "Full specification and details of the requisition" },
+  "quality-report":      { title: "Quality Reports",      subtitle: "Submit quality inspection reports" },
+  "fund-verification":   { title: "Fund Verification",    subtitle: "Verify budget availability" },
+  "method":              { title: "Method Selection",     subtitle: "Select procurement method for verified requisitions" },
+  "suppliers":           { title: "Suppliers",            subtitle: "Registered supplier directory" },
+  "bidding":             { title: "Bidding",              subtitle: "Manage bid openings and supplier invitations" },
+  "evaluations":         { title: "Evaluations",          subtitle: "Technical and financial bid evaluation" },
+  "approvals":           { title: "Approvals",            subtitle: "Review BES reports and authorise POs" },
+  "grn":                 { title: "GRN",                  subtitle: "Generate goods received notes" },
+  "my-bids":             { title: "My Bids",              subtitle: "Track your submitted bids" },
+  "submit-bid":          { title: "Submit Bid",           subtitle: "Submit a sealed bid for an open tender" },
+  "payments":            { title: "Payments",             subtitle: "Process payments after quality report approval" },
 };
 
 interface DashboardLayoutProps {
@@ -58,15 +60,21 @@ export function DashboardLayout({ role, onLogout }: DashboardLayoutProps) {
   const [activeKey, setActiveKey] = useState<string>("dashboard");
   const [selectedProcurementId, setSelectedProcurementId] = useState<string | null>(null);
 
-  // When a user clicks "View" on a procurement row, navigate to the tracker
+  // When a user clicks "View Status" on a procurement row, navigate to the tracker
   const handleViewProcurement = (id: string) => {
     setSelectedProcurementId(id);
     setActiveKey("status-tracker");
   };
 
+  // When a user clicks "View Details" from action panels, navigate to the simple details sheet
+  const handleViewProcurementDetails = (id: string) => {
+    setSelectedProcurementId(id);
+    setActiveKey("procurement-details");
+  };
+
   // When navigating away from tracker via sidebar, clear selected
   const handleNavigate = (key: string) => {
-    if (key !== "status-tracker") setSelectedProcurementId(null);
+    if (key !== "status-tracker" && key !== "procurement-details") setSelectedProcurementId(null);
     setActiveKey(key);
   };
 
@@ -119,30 +127,49 @@ export function DashboardLayout({ role, onLogout }: DashboardLayoutProps) {
             />
           )}
 
+          {/* ── Procurement Details Sheet (shared across all roles) ── */}
+          {activeKey === "procurement-details" && selectedProcurement && (
+            <ProcurementDetails
+              procurement={selectedProcurement}
+              onBack={() => {
+                setSelectedProcurementId(null);
+                // Return to corresponding role action tab
+                if (role === "HOD") setActiveKey("quality-report");
+                else if (role === "BUR") setActiveKey("fund-verification");
+                else if (role === "SDC") setActiveKey("method");
+                else if (role === "TEC") setActiveKey("evaluations");
+                else if (role === "TB") setActiveKey("approvals");
+                else if (role === "STK") setActiveKey("grn");
+                else if (role === "FIN") setActiveKey("payments");
+                else setActiveKey("dashboard");
+              }}
+            />
+          )}
+
           {/* ── Role-specific views ── */}
-          {activeKey !== "status-tracker" && role === "HOD" && (
-            <HODDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} />
+          {activeKey !== "status-tracker" && activeKey !== "procurement-details" && role === "HOD" && (
+            <HODDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} onViewProcurementDetails={handleViewProcurementDetails} />
           )}
-          {activeKey !== "status-tracker" && role === "BUR" && (
-            <BursarDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} />
+          {activeKey !== "status-tracker" && activeKey !== "procurement-details" && role === "BUR" && (
+            <BursarDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} onViewProcurementDetails={handleViewProcurementDetails} />
           )}
-          {activeKey !== "status-tracker" && role === "SDC" && (
-            <SDCDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} />
+          {activeKey !== "status-tracker" && activeKey !== "procurement-details" && role === "SDC" && (
+            <SDCDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} onViewProcurementDetails={handleViewProcurementDetails} />
           )}
-          {activeKey !== "status-tracker" && role === "TEC" && (
-            <TECDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} />
+          {activeKey !== "status-tracker" && activeKey !== "procurement-details" && role === "TEC" && (
+            <TECDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} onViewProcurementDetails={handleViewProcurementDetails} />
           )}
-          {activeKey !== "status-tracker" && role === "TB" && (
-            <TBDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} />
+          {activeKey !== "status-tracker" && activeKey !== "procurement-details" && role === "TB" && (
+            <TBDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} onViewProcurementDetails={handleViewProcurementDetails} />
           )}
-          {activeKey !== "status-tracker" && role === "STK" && (
-            <StorekeeperDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} />
+          {activeKey !== "status-tracker" && activeKey !== "procurement-details" && role === "STK" && (
+            <StorekeeperDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} onViewProcurementDetails={handleViewProcurementDetails} />
           )}
-          {activeKey !== "status-tracker" && role === "SUP" && (
+          {activeKey !== "status-tracker" && activeKey !== "procurement-details" && role === "SUP" && (
             <SupplierDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} />
           )}
-          {activeKey !== "status-tracker" && role === "FIN" && (
-            <FinanceDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} />
+          {activeKey !== "status-tracker" && activeKey !== "procurement-details" && role === "FIN" && (
+            <FinanceDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} onViewProcurementDetails={handleViewProcurementDetails} />
           )}
         </main>
 

@@ -17,10 +17,11 @@ interface BursarDashboardProps {
   activeTab: string;
   onTabChange: (key: string) => void;
   onViewProcurement: (id: string) => void;
+  onViewProcurementDetails: (id: string) => void;
 }
 
-export function BursarDashboard({ user, activeTab, onTabChange, onViewProcurement }: BursarDashboardProps) {
-  if (activeTab === "fund-verification") return <FundVerificationPanel />;
+export function BursarDashboard({ user, activeTab, onTabChange, onViewProcurement, onViewProcurementDetails }: BursarDashboardProps) {
+  if (activeTab === "fund-verification") return <FundVerificationPanel onViewProcurementDetails={onViewProcurementDetails} />;
   if (activeTab === "procurements")      return <AllProcurementsPanel onViewProcurement={onViewProcurement} />;
   return <BursarOverview user={user} onTabChange={onTabChange} />;
 }
@@ -36,7 +37,7 @@ function BursarOverview({ user, onTabChange }: { user: UserContext; onTabChange:
   );
 }
 
-function FundVerificationPanel() {
+function FundVerificationPanel({ onViewProcurementDetails }: { onViewProcurementDetails: (id: string) => void }) {
   const pending = MOCK_PROCUREMENTS.filter(p => p.status === "Pending Fund Verification");
   const [selected, setSelected] = useState<Procurement | null>(pending[0] ?? null);
   const [budgetCode, setBudgetCode] = useState("");
@@ -93,8 +94,27 @@ function FundVerificationPanel() {
         {/* Right: verification form */}
         {selected ? (
           <div style={{ background: "#FFFFFF", border: "1px solid #E5E7EB", borderRadius: 14, padding: "24px" }}>
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: 0, marginBottom: 4 }}>{selected.title}</h3>
-            <p style={{ fontSize: 12, color: "#6B7280", margin: 0, marginBottom: 16 }}>{selected.id} · {selected.faculty}</p>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+              <div>
+                <h3 style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: 0, marginBottom: 4 }}>{selected.title}</h3>
+                <p style={{ fontSize: 12, color: "#6B7280", margin: 0 }}>{selected.id} · {selected.faculty}</p>
+              </div>
+              <button
+                onClick={() => onViewProcurementDetails(selected.id)}
+                style={{
+                  fontSize: 11,
+                  fontWeight: 700,
+                  padding: "6px 14px",
+                  background: "#F3F4F6",
+                  color: "#374151",
+                  border: "1px solid #E5E7EB",
+                  borderRadius: 7,
+                  cursor: "pointer",
+                }}
+              >
+                View Details
+              </button>
+            </div>
             <div style={{ background: "#FFF7ED", border: "1px solid #FED7AA", borderRadius: 8, padding: "12px 16px", marginBottom: 20, display: "flex", justifyContent: "space-between" }}>
               <span style={{ fontSize: 12, color: "#92400E", fontWeight: 600 }}>Requested Amount</span>
               <span style={{ fontSize: 14, fontWeight: 800, color: "#B45309" }}>{formatLKR(selected.value)}</span>

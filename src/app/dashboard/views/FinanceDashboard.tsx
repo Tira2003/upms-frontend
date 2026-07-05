@@ -16,10 +16,11 @@ interface FinanceDashboardProps {
   activeTab: string;
   onTabChange: (key: string) => void;
   onViewProcurement: (id: string) => void;
+  onViewProcurementDetails: (id: string) => void;
 }
 
-export function FinanceDashboard({ user, activeTab, onTabChange, onViewProcurement }: FinanceDashboardProps) {
-  if (activeTab === "payments")     return <PaymentsPanel />;
+export function FinanceDashboard({ user, activeTab, onTabChange, onViewProcurement, onViewProcurementDetails }: FinanceDashboardProps) {
+  if (activeTab === "payments")     return <PaymentsPanel onViewProcurementDetails={onViewProcurementDetails} />;
   if (activeTab === "procurements") return <AllProcurementsPanel onViewProcurement={onViewProcurement} />;
   return <FinanceOverview user={user} onTabChange={onTabChange} />;
 }
@@ -46,7 +47,7 @@ function FinanceOverview({ user, onTabChange }: { user: UserContext; onTabChange
   );
 }
 
-function PaymentsPanel() {
+function PaymentsPanel({ onViewProcurementDetails }: { onViewProcurementDetails: (id: string) => void }) {
   const pending = MOCK_PROCUREMENTS.filter(p => p.status === "Payment Pending");
   const [processed, setProcessed] = useState<Set<string>>(new Set());
   const [voucherNos, setVoucherNos] = useState<Record<string, string>>({});
@@ -85,7 +86,22 @@ function PaymentsPanel() {
                   <div>
                     <span style={{ fontSize: 12, fontWeight: 700, color: "#2563EB", fontFamily: "monospace" }}>{pr.id}</span>
                     <h3 style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: "4px 0" }}>{pr.title}</h3>
-                    <p style={{ fontSize: 12, color: "#6B7280", margin: 0 }}>{pr.faculty}</p>
+                    <p style={{ fontSize: 12, color: "#6B7280", margin: "0 0 10px" }}>{pr.faculty}</p>
+                    <button
+                      onClick={() => onViewProcurementDetails(pr.id)}
+                      style={{
+                        fontSize: 11,
+                        fontWeight: 700,
+                        padding: "5px 12px",
+                        background: "#F3F4F6",
+                        color: "#374151",
+                        border: "1px solid #E5E7EB",
+                        borderRadius: 7,
+                        cursor: "pointer",
+                      }}
+                    >
+                      View Details
+                    </button>
                   </div>
                   <div style={{ textAlign: "right" }}>
                     <div style={{ fontSize: 18, fontWeight: 800, color: "#B45309" }}>{formatLKR(pr.value)}</div>
