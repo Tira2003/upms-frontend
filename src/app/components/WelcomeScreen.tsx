@@ -27,7 +27,6 @@ export function WelcomeScreen({
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundAttachment: "fixed",
-        fontFamily: FONT,
       }}
     >
       {/* Header */}
