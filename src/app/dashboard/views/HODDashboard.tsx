@@ -1,8 +1,7 @@
 import { useState } from "react";
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-} from "recharts";
-import { MoreHorizontal, ArrowUpRight, Plus, TrendingUp } from "lucide-react";
+import { Plus, TrendingUp, MoreHorizontal, ArrowUpRight } from "lucide-react";
+import { WelcomeBanner } from "../components/WelcomeBanner";
+import { StatCardRow } from "../components/StatCard";
 import type { UserContext } from "../types";
 import { PageTitleBar } from "../components/ContentHeader";
 import { ActionQueueList } from "../components/ActionQueueList";
@@ -27,266 +26,47 @@ export function HODDashboard({ user, activeTab, onTabChange }: HODDashboardProps
   return <HODOverview user={user} onTabChange={onTabChange} />;
 }
 
-// ── Monthly procurement data for bar chart ──────────────────────────────────
-const chartData = [
-  { month: "Jan", value: 320 },
-  { month: "Feb", value: 480 },
-  { month: "Mar", value: 150 },
-  { month: "Apr", value: 620 },
-  { month: "May", value: 390 },
-  { month: "Jun", value: 710 },
-  { month: "Jul", value: 280 },
-];
 
-// ── Pipeline stages for the "My Wallet"-equivalent card ─────────────────────
-const pipelineStages = [
-  { label: "Pending Fund Verification", count: 1, color: "#F59E0B", badge: "#FEF3C7" },
-  { label: "Funds Verified",            count: 1, color: "#22C55E", badge: "#F0FDF4" },
-  { label: "Bidding Open",              count: 1, color: "#3B82F6", badge: "#EFF6FF" },
-  { label: "Technical Evaluation",      count: 1, color: "#8B5CF6", badge: "#F5F3FF" },
-];
 
 // ── HOD Overview ─────────────────────────────────────────────────────────────
 function HODOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k: string) => void }) {
   const queue = getActionQueueForRole("HOD");
-  const totalValue = MOCK_PROCUREMENTS.reduce((s, p) => s + p.value, 0);
+  const [search, setSearch] = useState("");
 
   return (
-    <div style={{ padding: "28px 28px 40px" }}>
-      <PageTitleBar
-        title="Overview"
-        subtitle="Here is the summary of your procurement activity"
-        actions={
-          <button
-            onClick={() => onTabChange("new-requisition")}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              padding: "9px 18px",
-              background: "#7A0C0C",
-              color: "#FFFFFF",
-              border: "none",
-              borderRadius: 9,
-              fontSize: 13,
-              fontWeight: 700,
-              cursor: "pointer",
-            }}
-          >
-            <Plus size={14} strokeWidth={2.5} />
-            New Requisition
-          </button>
-        }
+    <div style={{ padding: "28px 32px 40px" }}>
+      {/* Welcome Banner */}
+      <WelcomeBanner user={user} />
+
+      {/* 4 Stat Cards */}
+      <StatCardRow
+        total={MOCK_PROCUREMENTS.length}
+        inQueue={3}
+        actionRequired={queue.length}
+        completed={0}
       />
 
-      {/* ── Top stat cards (3 cards like reference) ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 20 }}>
-        {/* Hero card — crimson (like "My Balance" green card in reference) */}
-        <HeroStatCard
-          title="Total Procurement Value"
-          subtitle="All active requisitions"
-          value={formatLKR(totalValue)}
-          badge="+12%"
-          badgeUp
-          linkLabel="View all procurements"
-          onClick={() => onTabChange("procurements")}
-        />
-
-        {/* Regular card — In Queue */}
-        <RegularStatCard
-          icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>}
-          iconBg="#FFF7ED"
-          title="In Your Queue"
-          subtitle="Awaiting your action"
-          value="3"
-          badge="+2"
-          badgeUp
-          linkLabel="View action queue"
-          onClick={() => {}}
-        />
-
-        {/* Regular card — Action Required (gold highlighted) */}
-        <RegularStatCard
-          icon={<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7A0C0C" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>}
-          iconBg="#FEF2F2"
-          title="Action Required"
-          subtitle="Quality reports pending"
-          value={String(queue.length)}
-          badge="Urgent"
-          badgeUp={false}
-          highlight
-          linkLabel="Submit quality report"
-          onClick={() => onTabChange("quality-report")}
-        />
-      </div>
-
-      {/* ── Middle row: pipeline + chart ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1.6fr", gap: 16, marginBottom: 20 }}>
-
-        {/* Left: Pipeline stages (like "My Wallet" in reference) */}
-        <div
-          style={{
-            background: "#FFFFFF",
-            borderRadius: 14,
-            padding: "20px",
-            border: "1px solid #F1F5F9",
-            boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
-          }}
-        >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-            <div>
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: 0 }}>Procurement Pipeline</h3>
-              <p style={{ fontSize: 11, color: "#9CA3AF", margin: "3px 0 0" }}>Current stage distribution</p>
-            </div>
-            <button style={{ border: "none", background: "none", cursor: "pointer", color: "#9CA3AF" }}>
-              <MoreHorizontal size={16} />
-            </button>
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-            {pipelineStages.map(stage => (
-              <div
-                key={stage.label}
-                style={{
-                  background: stage.badge,
-                  borderRadius: 10,
-                  padding: "12px 14px",
-                  position: "relative",
-                }}
-              >
-                <div
-                  style={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: "50%",
-                    background: stage.color,
-                    marginBottom: 8,
-                  }}
-                />
-                <div style={{ fontSize: 20, fontWeight: 800, color: "#111827", lineHeight: 1 }}>{stage.count}</div>
-                <div style={{ fontSize: 10, color: "#6B7280", marginTop: 3, lineHeight: 1.3 }}>
-                  {stage.label}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div
-            style={{
-              marginTop: 14,
-              paddingTop: 12,
-              borderTop: "1px solid #F3F4F6",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <span style={{ fontSize: 12, color: "#9CA3AF" }}>{MOCK_PROCUREMENTS.length} total procurements</span>
-            <button
-              onClick={() => onTabChange("procurements")}
-              style={{
-                fontSize: 12,
-                fontWeight: 600,
-                color: "#7A0C0C",
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: 4,
-              }}
-            >
-              View all <ArrowUpRight size={12} />
-            </button>
-          </div>
-        </div>
-
-        {/* Right: Cash flow bar chart (like reference) */}
-        <div
-          style={{
-            background: "#FFFFFF",
-            borderRadius: 14,
-            padding: "20px",
-            border: "1px solid #F1F5F9",
-            boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
-          }}
-        >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 4 }}>
-            <div>
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: 0 }}>Procurement Spend</h3>
-              <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: 4 }}>
-                <span style={{ fontSize: 26, fontWeight: 800, color: "#111827" }}>LKR 5.9M</span>
-                <span
-                  style={{
-                    fontSize: 11,
-                    fontWeight: 700,
-                    padding: "2px 8px",
-                    borderRadius: 20,
-                    background: "#F0FDF4",
-                    color: "#15803D",
-                  }}
-                >
-                  +12% ↑
-                </span>
-              </div>
-            </div>
-            <div style={{ display: "flex", gap: 6 }}>
-              {["Monthly", "Yearly"].map((t, i) => (
-                <button
-                  key={t}
-                  style={{
-                    padding: "4px 10px",
-                    fontSize: 11,
-                    fontWeight: 600,
-                    border: "none",
-                    borderRadius: 6,
-                    cursor: "pointer",
-                    background: i === 1 ? "#7A0C0C" : "#F3F4F6",
-                    color: i === 1 ? "#FFFFFF" : "#6B7280",
-                  }}
-                >
-                  {t}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div style={{ height: 160, marginTop: 16 }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData} barSize={22}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" vertical={false} />
-                <XAxis
-                  dataKey="month"
-                  tick={{ fontSize: 11, fill: "#9CA3AF" }}
-                  axisLine={false}
-                  tickLine={false}
-                />
-                <YAxis
-                  tick={{ fontSize: 11, fill: "#9CA3AF" }}
-                  axisLine={false}
-                  tickLine={false}
-                  tickFormatter={v => `${v}k`}
-                />
-                <Tooltip
-                  formatter={(v: number) => [`LKR ${v}k`, "Spend"]}
-                  contentStyle={{
-                    borderRadius: 8,
-                    border: "1px solid #E5E7EB",
-                    fontSize: 12,
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-                  }}
-                />
-                <Bar
-                  dataKey="value"
-                  fill="#7A0C0C"
-                  radius={[5, 5, 0, 0]}
-                  activeBar={{ fill: "#F59E0B" }}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
+      {/* Create Purchase Requisition button */}
+      <button
+        onClick={() => onTabChange("new-requisition")}
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 6,
+          padding: "10px 20px",
+          background: "#7A0C0C",
+          color: "#FFFFFF",
+          border: "none",
+          borderRadius: 9,
+          fontSize: 13,
+          fontWeight: 700,
+          cursor: "pointer",
+          marginBottom: 24,
+        }}
+      >
+        <Plus size={14} strokeWidth={2.5} />
+        Create Purchase Requisition
+      </button>
 
       {/* ── Bottom: Recent Procurements table ── */}
       <div
@@ -316,7 +96,26 @@ function HODOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k
             {/* Search */}
             <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", border: "1px solid #E5E7EB", borderRadius: 7, background: "#FAFAFA" }}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round"/></svg>
-              <span style={{ fontSize: 12, color: "#9CA3AF" }}>Search</span>
+              <input
+                type="text"
+                placeholder="Search..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                style={{
+                  border: "none",
+                  background: "none",
+                  outline: "none",
+                  fontSize: 12,
+                  color: "#374151",
+                  width: 140,
+                }}
+              />
+              {search && (
+                <button
+                  onClick={() => setSearch("")}
+                  style={{ border: "none", background: "none", cursor: "pointer", color: "#9CA3AF", padding: 0, lineHeight: 1 }}
+                >✕</button>
+              )}
             </div>
             {/* Filter */}
             <button style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", border: "1px solid #E5E7EB", borderRadius: 7, background: "#FAFAFA", color: "#374151", fontSize: 12, cursor: "pointer" }}>
@@ -341,7 +140,15 @@ function HODOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k
               </tr>
             </thead>
             <tbody>
-              {MOCK_PROCUREMENTS.slice(0, 5).map((pr, i) => (
+              {MOCK_PROCUREMENTS.filter(pr => {
+                const q = search.toLowerCase();
+                return !q ||
+                  pr.title.toLowerCase().includes(q) ||
+                  pr.id.toLowerCase().includes(q) ||
+                  pr.faculty.toLowerCase().includes(q) ||
+                  pr.status.toLowerCase().includes(q) ||
+                  (pr.department ?? "").toLowerCase().includes(q);
+              }).slice(0, 8).map((pr, i) => (
                 <tr
                   key={pr.id}
                   style={{ borderBottom: "1px solid #F9FAFB" }}

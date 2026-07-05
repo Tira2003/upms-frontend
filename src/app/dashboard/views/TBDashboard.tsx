@@ -28,7 +28,7 @@ export function TBDashboard({ user, activeTab, onTabChange }: TBDashboardProps) 
 function TBOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k: string) => void }) {
   const queue = getActionQueueForRole("TB");
   return (
-    <div style={{ padding: "28px 32px", maxWidth: 1100 }}>
+    <div style={{ padding: "28px 32px" }}>
       <WelcomeBanner user={user} />
       <StatCardRow total={MOCK_PROCUREMENTS.length} inQueue={queue.length} actionRequired={queue.length} completed={2} />
       <ActionQueueList items={queue} onViewAll={() => onTabChange("approvals")} onItemClick={() => onTabChange("approvals")} />

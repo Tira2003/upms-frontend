@@ -26,7 +26,7 @@ export function StorekeeperDashboard({ user, activeTab, onTabChange }: Storekeep
 function STKOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k: string) => void }) {
   const queue = getActionQueueForRole("STK");
   return (
-    <div style={{ padding: "28px 32px", maxWidth: 1100 }}>
+    <div style={{ padding: "28px 32px" }}>
       <WelcomeBanner user={user} />
       <StatCardRow total={MOCK_PROCUREMENTS.length} inQueue={queue.length} actionRequired={queue.length} completed={2} />
       <ActionQueueList items={queue} onViewAll={() => onTabChange("grn")} onItemClick={() => onTabChange("grn")} />

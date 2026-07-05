@@ -27,7 +27,7 @@ export function BursarDashboard({ user, activeTab, onTabChange }: BursarDashboar
 function BursarOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k: string) => void }) {
   const queue = getActionQueueForRole("BUR");
   return (
-    <div style={{ padding: "28px 28px", maxWidth: 1100 }}>
+    <div style={{ padding: "28px 28px" }}>
       <WelcomeBanner user={user} />
       <StatCardRow total={MOCK_PROCUREMENTS.length} inQueue={queue.length} actionRequired={queue.length} completed={0} />
       <ActionQueueList items={queue} onViewAll={() => onTabChange("fund-verification")} onItemClick={() => onTabChange("fund-verification")} />

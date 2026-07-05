@@ -28,7 +28,7 @@ function FinanceOverview({ user, onTabChange }: { user: UserContext; onTabChange
   const totalPending = queue.reduce((sum, pr) => sum + pr.value, 0);
 
   return (
-    <div style={{ padding: "28px 32px", maxWidth: 1100 }}>
+    <div style={{ padding: "28px 32px" }}>
       <WelcomeBanner user={user} />
       <StatCardRow total={MOCK_PROCUREMENTS.length} inQueue={queue.length} actionRequired={queue.length} completed={2} />
 

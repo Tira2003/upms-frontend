@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { motion } from "motion/react";
+import usjLogo from "../../usj-logo.png";
+import { BackButton } from "./ui/BackButton";
 
 interface LoginScreenProps {
   onBack: () => void;
@@ -35,15 +37,7 @@ export function LoginScreen({ onBack, onLoginSuccess, onGoRegister }: LoginScree
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center p-4 bg-gray-100 font-sans">
       {/* Back button — top left */}
-      <button
-        onClick={onBack}
-        className="absolute top-6 left-6 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-gray-200 text-gray-500 text-[0.8rem] shadow-sm hover:text-gray-900 transition-all"
-      >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-        Back
-      </button>
+      <BackButton onClick={onBack} className="absolute top-6 left-6 z-20" />
 
       {/* Card */}
       <motion.div
@@ -54,12 +48,12 @@ export function LoginScreen({ onBack, onLoginSuccess, onGoRegister }: LoginScree
       >
         {/* Logo */}
         <div className="flex justify-center mb-6">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-gold to-gold-dark shadow-lg shadow-gold/35">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M12 2L2 7l10 5 10-5-10-5z" fill="white" />
-              <path d="M2 17l10 5 10-5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M2 12l10 5 10-5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-white border border-gray-200 shadow-md p-1.5">
+            <img
+              src={usjLogo}
+              alt="USJ Logo"
+              className="w-9 h-9 object-contain"
+            />
           </div>
         </div>
 
@@ -114,7 +108,7 @@ export function LoginScreen({ onBack, onLoginSuccess, onGoRegister }: LoginScree
                   setForgotSent(true);
                   setTimeout(() => setForgotSent(false), 4000);
                 }}
-                className="text-gold font-medium text-[0.78rem] hover:text-amber-500 transition-colors"
+                className="text-maroon font-semibold text-[0.78rem] hover:text-maroon-light transition-colors"
               >
                 Forgot password?
               </button>
@@ -164,12 +158,12 @@ export function LoginScreen({ onBack, onLoginSuccess, onGoRegister }: LoginScree
               type="button"
               onClick={() => setRemember((p) => !p)}
               className={`w-4 h-4 rounded flex items-center justify-center shrink-0 transition-all border ${
-                remember ? "bg-gradient-to-br from-gold to-gold-dark border-none" : "border-gray-300"
+                remember ? "bg-gradient-to-br from-maroon to-maroon-dark border-none" : "border-gray-300"
               }`}
             >
               {remember && (
                 <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
-                  <path d="M2 6l3 3 5-5" stroke="#0a1628" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M2 6l3 3 5-5" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               )}
             </button>
@@ -180,10 +174,10 @@ export function LoginScreen({ onBack, onLoginSuccess, onGoRegister }: LoginScree
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full py-3.5 rounded-full transition-all duration-200 flex items-center justify-center gap-2 mt-1 text-navy font-bold text-[0.95rem] tracking-wide ${
+            className={`w-full py-3.5 rounded-full transition-all duration-200 flex items-center justify-center gap-2 mt-1 text-white font-bold text-[0.95rem] tracking-wide ${
               isLoading 
-                ? "bg-gold/60 cursor-not-allowed shadow-none" 
-                : "bg-gradient-to-br from-gold to-gold-dark shadow-lg shadow-gold/30 hover:brightness-105 active:scale-[0.99]"
+                ? "bg-maroon/60 cursor-not-allowed shadow-none" 
+                : "bg-gradient-to-br from-maroon to-maroon-dark hover:brightness-110 active:scale-[0.99]"
             }`}
           >
             {isLoading ? (
@@ -208,7 +202,7 @@ export function LoginScreen({ onBack, onLoginSuccess, onGoRegister }: LoginScree
         {/* Microsoft Outlook SSO */}
         <button
           type="button"
-          className="w-full py-3 rounded-xl flex items-center justify-center gap-2.5 transition-all bg-white border border-gray-200 text-gray-900 font-medium text-[0.88rem] shadow-sm hover:bg-gray-50 hover:border-gray-300"
+          className="w-full py-3 rounded-xl flex items-center justify-center gap-2.5 transition-all bg-white border border-gray-200 text-gray-900 font-medium text-[0.88rem] hover:bg-gray-50 hover:border-gray-300"
         >
           <svg width="17" height="17" viewBox="0 0 21 21" fill="none">
             <rect x="1" y="1" width="9" height="9" fill="#F25022" />
@@ -224,7 +218,7 @@ export function LoginScreen({ onBack, onLoginSuccess, onGoRegister }: LoginScree
           Don't have an account?{" "}
           <button
             onClick={onGoRegister}
-            className="text-gold font-semibold hover:text-amber-500 transition-colors"
+            className="text-maroon font-semibold hover:text-maroon-light transition-colors"
           >
             Request access
           </button>

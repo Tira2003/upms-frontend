@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { Mail, Lock, Eye, EyeOff, ChevronDown, ArrowRight } from "lucide-react";
+import usjLogo from "../../usj-logo.png";
+import { BackButton } from "./ui/BackButton";
 
 const ROLES = [
   "Lecturer",
@@ -74,30 +76,25 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
         initial={{ opacity: 0, x: -30 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.7 }}
-        className="hidden lg:flex flex-col w-[420px] shrink-0 rounded-3xl overflow-hidden relative bg-gradient-to-b from-stone-100 to-stone-200 border border-stone-200"
+        className="hidden lg:flex flex-col w-[420px] shrink-0 rounded-3xl overflow-hidden relative bg-gradient-to-b from-maroon to-maroon-dark border border-maroon-dark text-white"
       >
         {/* Back button */}
-        <button
-          onClick={onBack}
-          className="absolute top-6 left-6 z-10 flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/70 border border-stone-200 text-stone-600 text-[0.78rem] font-medium hover:bg-white hover:text-stone-900 transition-all"
-        >
-          ← Back
-        </button>
+        <BackButton onClick={onBack} className="absolute top-6 left-6 z-10" />
 
         {/* Request Access content */}
         <div className="flex-1 flex flex-col justify-center px-10 pt-20 pb-8">
           {/* Header */}
           <div className="mb-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-5 bg-gold/10 border border-gold/25">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-5 bg-gold/20 border border-gold/30">
               <div className="w-1.5 h-1.5 rounded-full bg-gold" />
-              <span className="text-gold-dark text-[0.72rem] font-semibold tracking-wider uppercase">
+              <span className="text-gold text-[0.72rem] font-semibold tracking-wider uppercase">
                 REQUEST ACCESS
               </span>
             </div>
-            <h2 className="text-navy text-[1.55rem] font-bold tracking-tight leading-tight">
+            <h2 className="text-white text-[1.55rem] font-bold tracking-tight leading-tight">
               Register your details<br />to request access.
             </h2>
-            <p className="mt-3 text-stone-500 text-sm leading-relaxed">
+            <p className="mt-3 text-white/70 text-sm leading-relaxed">
               Your application will be reviewed by the system administrator.
             </p>
           </div>
@@ -116,8 +113,8 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
                   <div
                     className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 font-bold text-[0.72rem] tracking-wider ${
                       i === 0
-                        ? "bg-gradient-to-br from-gold to-gold-dark text-navy"
-                        : "bg-white border border-stone-200 text-stone-400"
+                        ? "bg-gradient-to-br from-gold to-gold-dark text-maroon font-bold"
+                        : "bg-white/10 border border-white/10 text-white/50"
                     }`}
                   >
                     {step.num}
@@ -126,8 +123,8 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
                     <div
                       className={`w-px flex-1 my-1 min-h-[28px] ${
                         i === 0
-                          ? "bg-gradient-to-b from-gold-dark to-stone-200"
-                          : "bg-stone-200"
+                          ? "bg-gradient-to-b from-gold-dark to-white/10"
+                          : "bg-white/10"
                       }`}
                     />
                   )}
@@ -136,7 +133,7 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
                 <div className="pt-1.5 pb-6">
                   <span
                     className={`text-[0.9rem] leading-normal ${
-                      i === 0 ? "text-navy font-semibold" : "text-stone-600 font-medium"
+                      i === 0 ? "text-white font-bold" : "text-white/60 font-medium"
                     }`}
                   >
                     {step.label}
@@ -151,12 +148,7 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
       {/* Right form panel */}
       <div className="flex-1 flex flex-col items-center justify-between py-8 px-4 sm:px-12 relative">
         {/* Mobile back */}
-        <button
-          onClick={onBack}
-          className="lg:hidden self-start flex items-center gap-2 mb-6 text-stone-600 text-sm font-medium hover:text-stone-900 transition-colors"
-        >
-          ← Back
-        </button>
+        <BackButton onClick={onBack} className="lg:hidden self-start mb-6" />
 
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -166,17 +158,17 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
         >
           {/* Logo */}
           <div className="flex justify-center mb-5">
-            <div className="w-11 h-11 rounded-lg flex items-center justify-center bg-gradient-to-br from-gold to-gold-dark shadow-md">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2L2 7l10 5 10-5-10-5z" fill="white" />
-                <path d="M2 17l10 5 10-5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M2 12l10 5 10-5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+            <div className="w-11 h-11 rounded-lg flex items-center justify-center bg-white border border-stone-200 shadow-md p-1.5">
+              <img
+                src={usjLogo}
+                alt="USJ Logo"
+                className="w-8 h-8 object-contain"
+              />
             </div>
           </div>
 
           {/* Heading */}
-          <h1 className="text-center text-navy text-[1.7rem] font-semibold tracking-tight">
+          <h1 className="text-center text-maroon text-[1.7rem] font-bold tracking-tight">
             Create an Account
           </h1>
           <p className="text-center mt-1.5 mb-6 text-stone-500 text-[0.88rem]">
@@ -186,7 +178,7 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
           {/* SSO */}
           <button
             type="button"
-            className="w-full py-2.5 rounded-lg flex items-center justify-center gap-2 mb-2.5 bg-white border border-stone-200 text-navy font-medium text-[0.88rem] hover:border-stone-400 hover:bg-stone-50 transition-all shadow-sm"
+            className="w-full py-2.5 rounded-lg flex items-center justify-center gap-2 mb-2.5 bg-white border border-stone-200 text-maroon font-semibold text-[0.88rem] hover:border-maroon hover:bg-stone-50 transition-all"
           >
             <svg width="16" height="16" viewBox="0 0 21 21" fill="none">
               <rect x="1" y="1" width="9" height="9" fill="#F25022" />
@@ -208,7 +200,7 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
           <form onSubmit={handleSubmit} className="space-y-3">
             <div className="grid grid-cols-2 gap-2.5">
               <div>
-                <label className="block mb-1 text-navy text-[0.78rem] font-semibold">
+                <label className="block mb-1 text-maroon text-[0.78rem] font-semibold">
                   First Name
                 </label>
                 <input
@@ -216,7 +208,7 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
                   value={form.firstName}
                   onChange={set("firstName")}
                   placeholder="Kasun"
-                  className={`w-full px-3 py-2.5 rounded-lg outline-none border text-navy text-sm ${
+                  className={`w-full px-3 py-2.5 rounded-lg outline-none border text-maroon text-sm ${
                     errors.firstName ? "border-red-500 focus:border-red-500 bg-white" : "border-stone-200 focus:border-gold bg-white"
                   }`}
                 />
@@ -227,7 +219,7 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
                 )}
               </div>
               <div>
-                <label className="block mb-1 text-navy text-[0.78rem] font-semibold">
+                <label className="block mb-1 text-maroon text-[0.78rem] font-semibold">
                   Last Name
                 </label>
                 <input
@@ -235,7 +227,7 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
                   value={form.lastName}
                   onChange={set("lastName")}
                   placeholder="Perera"
-                  className={`w-full px-3 py-2.5 rounded-lg outline-none border text-navy text-sm ${
+                  className={`w-full px-3 py-2.5 rounded-lg outline-none border text-maroon text-sm ${
                     errors.lastName ? "border-red-500 focus:border-red-500 bg-white" : "border-stone-200 focus:border-gold bg-white"
                   }`}
                 />
@@ -248,7 +240,7 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
             </div>
 
             <div>
-              <label className="block mb-1 text-navy text-[0.78rem] font-semibold">
+              <label className="block mb-1 text-maroon text-[0.78rem] font-semibold">
                 Email
               </label>
               <div className="relative">
@@ -261,7 +253,7 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
                   value={form.email}
                   onChange={set("email")}
                   placeholder="name@sjp.ac.lk"
-                  className={`w-full pl-9 pr-3 py-2.5 rounded-lg outline-none border text-navy text-sm ${
+                  className={`w-full pl-9 pr-3 py-2.5 rounded-lg outline-none border text-maroon text-sm ${
                     errors.email ? "border-red-500 focus:border-red-500 bg-white" : "border-stone-200 focus:border-gold bg-white"
                   }`}
                 />
@@ -274,7 +266,7 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
             </div>
 
             <div>
-              <label className="block mb-1 text-navy text-[0.78rem] font-semibold">
+              <label className="block mb-1 text-maroon text-[0.78rem] font-semibold">
                 Password
               </label>
               <div className="relative">
@@ -287,7 +279,7 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
                   value={form.password}
                   onChange={set("password")}
                   placeholder="Min. 8 characters"
-                  className={`w-full pl-9 pr-10 py-2.5 rounded-lg outline-none border text-navy text-sm ${
+                  className={`w-full pl-9 pr-10 py-2.5 rounded-lg outline-none border text-maroon text-sm ${
                     errors.password ? "border-red-500 focus:border-red-500 bg-white" : "border-stone-200 focus:border-gold bg-white"
                   }`}
                 />
@@ -327,7 +319,7 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
             </div>
 
             <div>
-              <label className="block mb-1 text-navy text-[0.78rem] font-semibold">
+              <label className="block mb-1 text-maroon text-[0.78rem] font-semibold">
                 Applied Role
               </label>
               <div className="relative">
@@ -336,7 +328,7 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
                   onChange={set("role")}
                   className={`w-full px-3 py-2.5 rounded-lg outline-none border text-sm appearance-none cursor-pointer ${
                     errors.role ? "border-red-500 focus:border-red-500 bg-white" : "border-stone-200 focus:border-gold bg-white"
-                  } ${form.role ? "text-navy" : "text-stone-400"}`}
+                  } ${form.role ? "text-maroon" : "text-stone-400"}`}
                 >
                   <option value="" disabled>
                     Select your role…
@@ -362,7 +354,7 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full py-3 rounded-lg flex items-center justify-center gap-2 mt-1 transition-all bg-gradient-to-br from-gold to-gold-dark text-navy font-semibold text-[0.92rem] shadow-lg shadow-gold/30 hover:brightness-105 active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed`}
+              className={`w-full py-3 rounded-lg flex items-center justify-center gap-2 mt-1 transition-all bg-gradient-to-br from-maroon to-maroon-dark text-white font-bold text-[0.92rem] hover:brightness-110 active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed`}
             >
               {isLoading ? "Submitting…" : (
                 <>
@@ -377,7 +369,7 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
             Already have an account?{" "}
             <button
               onClick={onGoLogin}
-              className="text-gold-dark font-semibold hover:text-amber-500 transition-colors"
+              className="text-maroon font-semibold hover:text-maroon-light transition-colors"
             >
               Sign in
             </button>

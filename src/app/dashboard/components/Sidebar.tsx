@@ -4,6 +4,7 @@ import {
   ShieldCheck, PackageCheck, FileText, Send, CreditCard,
   Settings, LogOut,
 } from "lucide-react";
+import { useState } from "react";
 import usjLogo from "../../../usj-logo.png";
 import type { Role, UserContext } from "../types";
 
@@ -134,6 +135,7 @@ interface SidebarProps {
 
 export function Sidebar({ user, activeKey, onNavigate, onSignOut }: SidebarProps) {
   const sections = ROLE_NAV[user.role] ?? [];
+  const [search, setSearch] = useState("");
 
   return (
     <aside
@@ -211,14 +213,40 @@ export function Sidebar({ user, activeKey, onNavigate, onSignOut }: SidebarProps
             <circle cx="11" cy="11" r="8" />
             <path d="M21 21l-4.35-4.35" strokeLinecap="round" />
           </svg>
-          <span style={{ fontSize: 12, color: "#9CA3AF", flex: 1 }}>Search</span>
-          <kbd style={{ fontSize: 10, color: "#D1D5DB", fontFamily: "monospace" }}>⌘ K</kbd>
+          <input
+            type="text"
+            placeholder="Search..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            style={{
+              border: "none",
+              background: "none",
+              outline: "none",
+              fontSize: 12,
+              color: "#374151",
+              flex: 1,
+              minWidth: 0,
+            }}
+          />
+          {search && (
+            <button
+              onClick={() => setSearch("")}
+              style={{ border: "none", background: "none", cursor: "pointer", color: "#9CA3AF", padding: 0, lineHeight: 1, fontSize: 13 }}
+            >×</button>
+          )}
         </div>
       </div>
 
       {/* ── Nav sections ── */}
       <nav style={{ flex: 1, padding: "12px 12px 0", display: "flex", flexDirection: "column", gap: 20 }}>
-        {sections.map(section => (
+        {sections.map(section => {
+          const filteredItems = search
+            ? section.items.filter(item =>
+                item.label.toLowerCase().includes(search.toLowerCase())
+              )
+            : section.items;
+          if (filteredItems.length === 0) return null;
+          return (
           <div key={section.title}>
             <div
               style={{
@@ -232,7 +260,7 @@ export function Sidebar({ user, activeKey, onNavigate, onSignOut }: SidebarProps
             >
               {section.title}
             </div>
-            {section.items.map(item => {
+            {filteredItems.map(item => {
               const Icon = item.icon;
               const isActive = activeKey === item.key;
               return (
@@ -291,7 +319,8 @@ export function Sidebar({ user, activeKey, onNavigate, onSignOut }: SidebarProps
               );
             })}
           </div>
-        ))}
+          );
+        })}
 
         {/* GENERAL section */}
         <div>

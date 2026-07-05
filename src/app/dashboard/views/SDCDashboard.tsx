@@ -30,7 +30,7 @@ function SDCOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k
   const biddingOpen = MOCK_PROCUREMENTS.filter(p => p.status === "Bidding Open");
 
   return (
-    <div style={{ padding: "28px 32px", maxWidth: 1100 }}>
+    <div style={{ padding: "28px 32px" }}>
       <WelcomeBanner user={user} />
       <StatCardRow
         total={MOCK_PROCUREMENTS.length}

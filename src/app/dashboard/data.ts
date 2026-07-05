@@ -7,7 +7,7 @@ import type { Procurement, ProcurementStatus } from "./types";
 export const MOCK_PROCUREMENTS: Procurement[] = [
   {
     id: "PR-2026-001",
-    title: "Laboratory Microscopes — Biology Dept",
+    title: "Laboratory Microscopes",
     faculty: "Faculty of Applied Sciences",
     department: "Biology",
     value: 320000,
@@ -19,7 +19,7 @@ export const MOCK_PROCUREMENTS: Procurement[] = [
   },
   {
     id: "PR-2026-002",
-    title: "Office Stationery — CS Department",
+    title: "Office Stationery",
     faculty: "Faculty of Applied Sciences",
     department: "Computer Science",
     value: 185000,
@@ -31,7 +31,7 @@ export const MOCK_PROCUREMENTS: Procurement[] = [
   },
   {
     id: "PR-2026-003",
-    title: "Network Switches — Faculty IT Upgrade",
+    title: "Network Switches",
     faculty: "Faculty of Applied Sciences",
     department: "IT Unit",
     value: 1250000,
@@ -43,7 +43,7 @@ export const MOCK_PROCUREMENTS: Procurement[] = [
   },
   {
     id: "PR-2026-004",
-    title: "Auditorium AV System — Management Faculty",
+    title: "Auditorium AV System",
     faculty: "Faculty of Management Studies",
     department: "Management",
     value: 4500000,
@@ -55,7 +55,7 @@ export const MOCK_PROCUREMENTS: Procurement[] = [
   },
   {
     id: "PR-2026-005",
-    title: "Chemistry Lab Chemicals — Annual Supply",
+    title: "Chemistry Lab Chemicals",
     faculty: "Faculty of Applied Sciences",
     department: "Chemistry",
     value: 275000,
@@ -67,7 +67,7 @@ export const MOCK_PROCUREMENTS: Procurement[] = [
   },
   {
     id: "PR-2026-006",
-    title: "Library Books — Engineering Reference Set",
+    title: "Library Books",
     faculty: "Faculty of Engineering",
     department: "Library",
     value: 420000,
@@ -79,7 +79,7 @@ export const MOCK_PROCUREMENTS: Procurement[] = [
   },
   {
     id: "PR-2026-007",
-    title: "Desktop Computers — Staff Workstations",
+    title: "Desktop Computers",
     faculty: "Faculty of Humanities",
     department: "IT Unit",
     value: 2800000,
@@ -91,7 +91,7 @@ export const MOCK_PROCUREMENTS: Procurement[] = [
   },
   {
     id: "PR-2026-008",
-    title: "Air Conditioning Units — Lecture Hall B",
+    title: "Air Conditioning Units",
     faculty: "Faculty of Medical Sciences",
     department: "Facilities",
     value: 890000,

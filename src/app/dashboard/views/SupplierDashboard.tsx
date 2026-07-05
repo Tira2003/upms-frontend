@@ -31,7 +31,7 @@ export function SupplierDashboard({ user, activeTab, onTabChange }: SupplierDash
 function SupplierOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k: string) => void }) {
   const openTenders = getProcurementsForRole("SUP");
   return (
-    <div style={{ padding: "28px 32px", maxWidth: 1100 }}>
+    <div style={{ padding: "28px 32px" }}>
       <WelcomeBanner user={user} />
       <StatCardRow total={openTenders.length} inQueue={myBids.length} actionRequired={openTenders.length} completed={0} />
 

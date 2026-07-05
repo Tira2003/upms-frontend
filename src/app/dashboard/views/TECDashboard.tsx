@@ -27,7 +27,7 @@ export function TECDashboard({ user, activeTab, onTabChange }: TECDashboardProps
 function TECOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k: string) => void }) {
   const queue = getActionQueueForRole("TEC");
   return (
-    <div style={{ padding: "28px 32px", maxWidth: 1100 }}>
+    <div style={{ padding: "28px 32px" }}>
       <WelcomeBanner user={user} />
       <StatCardRow total={MOCK_PROCUREMENTS.length} inQueue={queue.length} actionRequired={queue.length} completed={0} />
       <ActionQueueList items={queue} onViewAll={() => onTabChange("evaluations")} onItemClick={() => onTabChange("evaluations")} />

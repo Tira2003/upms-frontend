@@ -41,8 +41,8 @@ export function StatusBadge({ status, size = "sm" }: StatusBadgeProps) {
       style={{
         display: "inline-flex",
         alignItems: "center",
-        gap: size === "sm" ? 5 : 6,
-        padding: size === "sm" ? "3px 8px" : "4px 10px",
+        gap: size === "sm" ? 6 : 8,
+        padding: size === "sm" ? "3px 10px" : "4px 12px",
         borderRadius: 20,
         fontSize: size === "sm" ? 11 : 12,
         fontWeight: 600,
@@ -51,6 +51,8 @@ export function StatusBadge({ status, size = "sm" }: StatusBadgeProps) {
         border: `1px solid ${cfg.border}`,
         whiteSpace: "nowrap",
         letterSpacing: "0.01em",
+        width: size === "sm" ? 180 : 195,
+        boxSizing: "border-box",
       }}
     >
       <span

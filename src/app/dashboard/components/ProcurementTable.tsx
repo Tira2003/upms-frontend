@@ -153,7 +153,7 @@ export function ProcurementTable({
 
                 {/* Updated */}
                 <td style={{ padding: "13px 16px", whiteSpace: "nowrap" }}>
-                  <span style={{ fontSize: 11, color: "#9CA3AF", fontFamily: "monospace" }}>
+                  <span style={{ fontSize: 11, color: "#9CA3AF" }}>
                     {formatDate(pr.updatedAt)}
                   </span>
                 </td>

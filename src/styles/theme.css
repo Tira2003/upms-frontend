@@ -126,6 +126,9 @@
   --color-gold: #F59E0B;
   --color-gold-dark: #D97706;
   --color-panel: #0d1b3e;
+  --color-maroon: #7A0C0C;
+  --color-maroon-light: #961313;
+  --color-maroon-dark: #5C0808;
 }
 
 @layer base {

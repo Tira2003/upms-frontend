@@ -1,4 +1,4 @@
-import { Bell, Search, RotateCcw, ChevronDown } from "lucide-react";
+import { Bell, Search, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import type { UserContext } from "../types";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -32,27 +32,50 @@ export function ContentHeader({ user, pageTitle, pageSubtitle }: ContentHeaderPr
       {/* Left: breadcrumb */}
       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
         {/* Back/forward */}
-        <div style={{ display: "flex", gap: 2, marginRight: 8 }}>
-          {["←", "→"].map((arrow, i) => (
-            <button
-              key={arrow}
-              style={{
-                width: 26,
-                height: 26,
-                border: "1px solid #E5E7EB",
-                borderRadius: 6,
-                background: "#FAFAFA",
-                color: i === 0 ? "#374151" : "#D1D5DB",
-                cursor: i === 0 ? "pointer" : "not-allowed",
-                fontSize: 12,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {arrow}
-            </button>
-          ))}
+        <div style={{ display: "flex", gap: 6, marginRight: 8 }}>
+          <button
+            style={{
+              width: 28,
+              height: 28,
+              border: "1px solid #E5E7EB",
+              borderRadius: 6,
+              background: "#FAFAFA",
+              color: "#374151",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              transition: "all 0.1s",
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLElement).style.background = "#F3F4F6";
+              (e.currentTarget as HTMLElement).style.color = "#111827";
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLElement).style.background = "#FAFAFA";
+              (e.currentTarget as HTMLElement).style.color = "#374151";
+            }}
+          >
+            <ChevronLeft size={14} strokeWidth={2.6} />
+          </button>
+          <button
+            disabled
+            style={{
+              width: 28,
+              height: 28,
+              border: "1px solid #E5E7EB",
+              borderRadius: 6,
+              background: "#FAFAFA",
+              color: "#D1D5DB",
+              cursor: "not-allowed",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              opacity: 0.6,
+            }}
+          >
+            <ChevronRight size={14} strokeWidth={2.6} />
+          </button>
         </div>
 
         {/* Breadcrumb */}
@@ -61,47 +84,8 @@ export function ContentHeader({ user, pageTitle, pageSubtitle }: ContentHeaderPr
         <span style={{ fontSize: 12, fontWeight: 600, color: "#374151" }}>{pageTitle}</span>
       </div>
 
-      {/* Right: search + bell + avatar + month filter */}
+      {/* Right: bell + avatar */}
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        {/* Month filter chip */}
-        <button
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 5,
-            padding: "5px 12px",
-            border: "1px solid #E5E7EB",
-            borderRadius: 7,
-            background: "#FAFAFA",
-            color: "#374151",
-            fontSize: 12,
-            fontWeight: 500,
-            cursor: "pointer",
-          }}
-        >
-          This Month <ChevronDown size={12} />
-        </button>
-
-        {/* Reset */}
-        <button
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 5,
-            padding: "5px 12px",
-            border: "none",
-            background: "none",
-            color: "#9CA3AF",
-            fontSize: 12,
-            cursor: "pointer",
-          }}
-        >
-          <RotateCcw size={12} /> Reset Data
-        </button>
-
-        {/* Divider */}
-        <div style={{ width: 1, height: 20, background: "#E5E7EB" }} />
-
         {/* Bell */}
         <button
           style={{
@@ -133,7 +117,7 @@ export function ContentHeader({ user, pageTitle, pageSubtitle }: ContentHeaderPr
           />
         </button>
 
-        {/* Avatar + name */}
+        {/* Avatar */}
         <div style={{ display: "flex", alignItems: "center", gap: 7, cursor: "pointer" }}>
           <div
             style={{
@@ -153,32 +137,6 @@ export function ContentHeader({ user, pageTitle, pageSubtitle }: ContentHeaderPr
           </div>
           <ChevronDown size={12} color="#9CA3AF" />
         </div>
-
-        {/* Share / Sign In button */}
-        <button
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            padding: "6px 14px",
-            background: "#7A0C0C",
-            color: "#FFFFFF",
-            border: "none",
-            borderRadius: 8,
-            fontSize: 12,
-            fontWeight: 700,
-            cursor: "pointer",
-          }}
-        >
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <circle cx="18" cy="5" r="3" />
-            <circle cx="6" cy="12" r="3" />
-            <circle cx="18" cy="19" r="3" />
-            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
-          </svg>
-          Share
-        </button>
       </div>
     </div>
   );

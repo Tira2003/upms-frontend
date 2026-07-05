@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import usjLogo from "../../usj-logo.png";
 import {
   ArrowRight,
   FileText,
@@ -27,35 +28,15 @@ export function WelcomeScreen({
         className="relative z-10 flex items-center justify-between px-10 pt-7 pb-2"
       >
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-gradient-to-br from-gold to-gold-dark shadow-md">
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-            >
-              <path
-                d="M12 2L2 7l10 5 10-5-10-5z"
-                fill="white"
-              />
-              <path
-                d="M2 17l10 5 10-5"
-                stroke="white"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M2 12l10 5 10-5"
-                stroke="white"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+          <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-white border border-stone-200 shadow-md p-1">
+            <img
+              src={usjLogo}
+              alt="USJ Logo"
+              className="w-8 h-8 object-contain"
+            />
           </div>
           <div>
-            <div className="text-navy font-semibold text-[0.95rem]">
+            <div className="text-maroon font-bold text-[0.95rem]">
               UPMS
             </div>
             <div className="text-[10px] tracking-[0.15em] uppercase text-stone-500">
@@ -89,7 +70,7 @@ export function WelcomeScreen({
             delay: 0.15,
             ease: "easeOut",
           }}
-          className="text-center text-navy text-[clamp(2.4rem,5.5vw,4.5rem)] font-semibold tracking-tight leading-[1.05] max-w-[900px]"
+          className="text-center text-maroon-dark text-[clamp(2.4rem,5.5vw,4.5rem)] font-bold tracking-tight leading-[1.05] max-w-[900px]"
         >
           Streamlined University
           <br />
@@ -114,23 +95,23 @@ export function WelcomeScreen({
           transition={{ duration: 0.6, delay: 0.5 }}
           className="flex flex-col sm:flex-row items-center gap-3 mt-9"
         >
-          <button
-            onClick={onSignUp}
-            className="group relative overflow-hidden px-7 py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 bg-gradient-to-br from-gold to-gold-dark text-navy font-semibold text-[0.95rem] tracking-wide min-w-[170px] shadow-lg shadow-gold/30 hover:brightness-105 active:scale-[0.98]"
-          >
-            Create Account
-            <ArrowRight
-              size={16}
-              strokeWidth={2.4}
-              className="transition-transform group-hover:translate-x-0.5"
-            />
-          </button>
-          <button
-            onClick={onLogin}
-            className="px-7 py-3 rounded-lg transition-all duration-200 bg-white border border-stone-300 text-navy font-medium text-[0.95rem] tracking-wide min-w-[170px] hover:border-navy hover:bg-stone-50 active:scale-[0.98]"
-          >
-            Sign In
-          </button>
+        <button
+          onClick={onSignUp}
+          className="group relative overflow-hidden px-7 py-3 rounded-lg transition-all duration-300 flex items-center justify-center gap-2 bg-gradient-to-br from-maroon to-maroon-dark text-white font-bold text-[0.95rem] tracking-wide min-w-[170px] hover:brightness-110 active:scale-[0.98]"
+        >
+          Create Account
+          <ArrowRight
+            size={16}
+            strokeWidth={2.4}
+            className="transition-transform group-hover:translate-x-0.5"
+          />
+        </button>
+        <button
+          onClick={onLogin}
+          className="px-7 py-3 rounded-lg transition-all duration-200 bg-white border border-stone-300 text-maroon font-medium text-[0.95rem] tracking-wide min-w-[170px] hover:border-maroon hover:bg-stone-50 active:scale-[0.98]"
+        >
+          Sign In
+        </button>
         </motion.div>
 
         {/* Illustration */}
@@ -206,7 +187,7 @@ export function WelcomeScreen({
                     }}
                   >
                     <div className="flex items-start justify-between mb-2">
-                      <div className="text-[0.7rem] font-semibold text-navy leading-[1.15]">
+                      <div className="text-[0.7rem] font-semibold text-maroon leading-[1.15]">
                         Requisition
                         <br />
                         {c.label}
@@ -257,7 +238,7 @@ export function WelcomeScreen({
                     <path
                       d="M10 50 Q 20 20, 35 35 T 60 40 Q 75 20, 90 45 T 120 35 Q 135 20, 150 40"
                       stroke="currentColor"
-                      className="text-navy"
+                      className="text-maroon"
                       strokeWidth="2.2"
                       strokeLinecap="round"
                       fill="none"
@@ -265,14 +246,14 @@ export function WelcomeScreen({
                     <path
                       d="M40 55 L 90 55"
                       stroke="currentColor"
-                      className="text-navy"
+                      className="text-maroon"
                       strokeWidth="1.5"
                       strokeLinecap="round"
                     />
                   </svg>
                 </div>
                 <div className="w-full border-t border-stone-200 mt-2 pt-3 text-center">
-                  <div className="text-navy font-semibold text-[0.85rem]">
+                  <div className="text-maroon font-semibold text-[0.85rem]">
                     Dr. R. Perera
                   </div>
                   <div className="text-gold-dark text-[0.7rem] font-medium">
@@ -308,7 +289,7 @@ export function WelcomeScreen({
                 <div className="text-stone-500 text-[0.7rem] tracking-widest uppercase">
                   PO-2026-0042
                 </div>
-                <div className="text-navy text-[1.4rem] font-bold tracking-tight mt-0.5">
+                <div className="text-maroon text-[1.4rem] font-bold tracking-tight mt-0.5">
                   LKR 284,342
                 </div>
                 <div className="text-stone-500 text-[0.7rem] mt-0.5">
