@@ -1,11 +1,8 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { Mail, Lock, Eye, EyeOff, ChevronDown, ArrowRight } from "lucide-react";
-
-const FONT = "'Google Sans Flex', sans-serif";
-const NAVY = "#0a1628";
-const GOLD = "#F59E0B";
-const GOLD_DARK = "#D97706";
+import usjLogo from "../../usj-logo.png";
+import { BackButton } from "./ui/BackButton";
 
 const ROLES = [
   "Lecturer",
@@ -69,88 +66,41 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
     }, 1400);
   };
 
-  const inputStyle = (hasError?: boolean): React.CSSProperties => ({
-    background: "white",
-    border: `1px solid ${hasError ? "#EF4444" : "#e7e5e4"}`,
-    color: NAVY,
-    fontFamily: FONT,
-    fontSize: "0.9rem",
-  });
-
   return (
-    <div
-      className="relative min-h-screen w-full flex p-4 sm:p-6"
-      style={{
-        background: "linear-gradient(180deg, #fafaf9 0%, #f5f5f4 100%)",
-        fontFamily: FONT,
-      }}
-    >
+    <div className="relative min-h-screen w-full flex p-4 sm:p-6 bg-gradient-to-b from-stone-50 to-stone-100 font-sans">
       {/* Top accent */}
-      <div
-        className="absolute top-0 left-0 w-full h-[3px]"
-        style={{ background: `linear-gradient(90deg, transparent, ${GOLD} 30%, ${GOLD} 70%, transparent)` }}
-      />
+      <div className="absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-transparent via-gold to-transparent" />
 
       {/* Left testimonial / branding card */}
       <motion.aside
         initial={{ opacity: 0, x: -30 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.7 }}
-        className="hidden lg:flex flex-col w-[420px] shrink-0 rounded-3xl overflow-hidden relative"
-        style={{
-          background: "linear-gradient(180deg, #f5f5f4 0%, #e7e5e4 100%)",
-          border: "1px solid #e7e5e4",
-        }}
+        className="hidden lg:flex flex-col w-[420px] shrink-0 rounded-3xl overflow-hidden relative bg-gradient-to-b from-maroon to-maroon-dark border border-maroon-dark text-white"
       >
         {/* Back button */}
-        <button
-          onClick={onBack}
-          className="absolute top-6 left-6 z-10 flex items-center gap-2 px-3 py-1.5 rounded-full transition-all"
-          style={{
-            background: "rgba(255,255,255,0.7)",
-            border: "1px solid #e7e5e4",
-            color: "#57534e",
-            fontSize: "0.78rem",
-            fontWeight: 500,
-          }}
-        >
-          ← Back
-        </button>
+        <BackButton onClick={onBack} className="absolute top-6 left-6 z-10" />
 
         {/* Request Access content */}
         <div className="flex-1 flex flex-col justify-center px-10 pt-20 pb-8">
           {/* Header */}
           <div className="mb-10">
-            <div
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-5"
-              style={{ background: `rgba(245,158,11,0.12)`, border: `1px solid rgba(245,158,11,0.25)` }}
-            >
-              <div className="w-1.5 h-1.5 rounded-full" style={{ background: GOLD }} />
-              <span style={{ color: GOLD_DARK, fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.04em" }}>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full mb-5 bg-gold/20 border border-gold/30">
+              <div className="w-1.5 h-1.5 rounded-full bg-gold" />
+              <span className="text-gold text-[0.72rem] font-semibold tracking-wider uppercase">
                 REQUEST ACCESS
               </span>
             </div>
-            <h2
-              style={{
-                color: NAVY,
-                fontSize: "1.55rem",
-                fontWeight: 700,
-                lineHeight: 1.25,
-                letterSpacing: "-0.02em",
-              }}
-            >
+            <h2 className="text-white text-[1.55rem] font-bold tracking-tight leading-tight">
               Register your details<br />to request access.
             </h2>
-            <p
-              className="mt-3"
-              style={{ color: "#78716c", fontSize: "0.875rem", lineHeight: 1.55 }}
-            >
+            <p className="mt-3 text-white/70 text-sm leading-relaxed">
               Your application will be reviewed by the system administrator.
             </p>
           </div>
 
           {/* Steps */}
-          <div className="flex flex-col gap-0">
+          <div className="flex flex-col">
             {[
               { num: "01", label: "Fill in your details" },
               { num: "02", label: "Submit registration" },
@@ -161,41 +111,30 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
                 {/* Step indicator column */}
                 <div className="flex flex-col items-center">
                   <div
-                    className="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
-                    style={{
-                      background: i === 0
-                        ? `linear-gradient(135deg, ${GOLD}, ${GOLD_DARK})`
-                        : "white",
-                      border: i === 0 ? "none" : "1.5px solid #e7e5e4",
-                      color: i === 0 ? NAVY : "#a8a29e",
-                      fontWeight: 700,
-                      fontSize: "0.72rem",
-                      letterSpacing: "0.03em",
-                    }}
+                    className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 font-bold text-[0.72rem] tracking-wider ${
+                      i === 0
+                        ? "bg-gradient-to-br from-gold to-gold-dark text-maroon font-bold"
+                        : "bg-white/10 border border-white/10 text-white/50"
+                    }`}
                   >
                     {step.num}
                   </div>
                   {i < arr.length - 1 && (
                     <div
-                      className="w-px flex-1 my-1"
-                      style={{
-                        background: i === 0
-                          ? `linear-gradient(180deg, ${GOLD_DARK}, #e7e5e4)`
-                          : "#e7e5e4",
-                        minHeight: "28px",
-                      }}
+                      className={`w-px flex-1 my-1 min-h-[28px] ${
+                        i === 0
+                          ? "bg-gradient-to-b from-gold-dark to-white/10"
+                          : "bg-white/10"
+                      }`}
                     />
                   )}
                 </div>
                 {/* Label */}
                 <div className="pt-1.5 pb-6">
                   <span
-                    style={{
-                      color: i === 0 ? NAVY : "#57534e",
-                      fontSize: "0.9rem",
-                      fontWeight: i === 0 ? 600 : 500,
-                      lineHeight: 1.4,
-                    }}
+                    className={`text-[0.9rem] leading-normal ${
+                      i === 0 ? "text-white font-bold" : "text-white/60 font-medium"
+                    }`}
                   >
                     {step.label}
                   </span>
@@ -209,13 +148,7 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
       {/* Right form panel */}
       <div className="flex-1 flex flex-col items-center justify-between py-8 px-4 sm:px-12 relative">
         {/* Mobile back */}
-        <button
-          onClick={onBack}
-          className="lg:hidden self-start flex items-center gap-2 mb-6"
-          style={{ color: "#57534e", fontSize: "0.85rem", fontWeight: 500 }}
-        >
-          ← Back
-        </button>
+        <BackButton onClick={onBack} className="lg:hidden self-start mb-6" />
 
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -225,76 +158,30 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
         >
           {/* Logo */}
           <div className="flex justify-center mb-5">
-            <div
-              className="w-11 h-11 rounded-lg flex items-center justify-center"
-              style={{ background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DARK})` }}
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2L2 7l10 5 10-5-10-5z" fill="white" />
-                <path d="M2 17l10 5 10-5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M2 12l10 5 10-5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+            <div className="w-11 h-11 rounded-lg flex items-center justify-center bg-white border border-stone-200 shadow-md p-1.5">
+              <img
+                src={usjLogo}
+                alt="USJ Logo"
+                className="w-8 h-8 object-contain"
+              />
             </div>
           </div>
 
           {/* Heading */}
-          <h1
-            className="text-center"
-            style={{
-              color: NAVY,
-              fontSize: "1.7rem",
-              fontWeight: 600,
-              letterSpacing: "-0.02em",
-            }}
-          >
+          <h1 className="text-center text-maroon text-[1.7rem] font-bold tracking-tight">
             Create an Account
           </h1>
-          <p
-            className="text-center mt-1.5 mb-6"
-            style={{ color: "#78716c", fontSize: "0.88rem" }}
-          >
+          <p className="text-center mt-1.5 mb-6 text-stone-500 text-[0.88rem]">
             Sign up to get started
           </p>
 
-          {/* SSO */}
-          <button
-            type="button"
-            className="w-full py-2.5 rounded-lg flex items-center justify-center gap-2 mb-2.5 transition-all"
-            style={{
-              background: "white",
-              border: "1px solid #e7e5e4",
-              color: NAVY,
-              fontWeight: 500,
-              fontSize: "0.88rem",
-            }}
-            onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.borderColor = "#a8a29e")}
-            onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.borderColor = "#e7e5e4")}
-          >
-            <svg width="16" height="16" viewBox="0 0 21 21" fill="none">
-              <rect x="1" y="1" width="9" height="9" fill="#F25022" />
-              <rect x="11" y="1" width="9" height="9" fill="#7FBA00" />
-              <rect x="1" y="11" width="9" height="9" fill="#00A4EF" />
-              <rect x="11" y="11" width="9" height="9" fill="#FFB900" />
-            </svg>
-            Continue with Microsoft Outlook
-          </button>
-          
-        
-          {/* Divider */}
-          <div className="flex items-center gap-3 my-5">
-            <div className="flex-1 h-px" style={{ background: "#e7e5e4" }} />
-            <span style={{ color: "#a8a29e", fontSize: "0.78rem" }}>or</span>
-            <div className="flex-1 h-px" style={{ background: "#e7e5e4" }} />
-          </div>
+
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-3">
             <div className="grid grid-cols-2 gap-2.5">
               <div>
-                <label
-                  className="block mb-1"
-                  style={{ color: NAVY, fontSize: "0.78rem", fontWeight: 600 }}
-                >
+                <label className="block mb-1 text-maroon text-[0.78rem] font-semibold">
                   First Name
                 </label>
                 <input
@@ -302,20 +189,18 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
                   value={form.firstName}
                   onChange={set("firstName")}
                   placeholder="Kasun"
-                  className="w-full px-3 py-2.5 rounded-lg outline-none"
-                  style={inputStyle(!!errors.firstName)}
+                  className={`w-full px-3 py-2.5 rounded-lg outline-none border text-maroon text-sm ${
+                    errors.firstName ? "border-red-500 focus:border-red-500 bg-white" : "border-stone-200 focus:border-gold bg-white"
+                  }`}
                 />
                 {errors.firstName && (
-                  <p className="mt-1 text-red-500" style={{ fontSize: "0.72rem" }}>
+                  <p className="mt-1 text-red-500 text-[0.72rem]">
                     {errors.firstName}
                   </p>
                 )}
               </div>
               <div>
-                <label
-                  className="block mb-1"
-                  style={{ color: NAVY, fontSize: "0.78rem", fontWeight: 600 }}
-                >
+                <label className="block mb-1 text-maroon text-[0.78rem] font-semibold">
                   Last Name
                 </label>
                 <input
@@ -323,11 +208,12 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
                   value={form.lastName}
                   onChange={set("lastName")}
                   placeholder="Perera"
-                  className="w-full px-3 py-2.5 rounded-lg outline-none"
-                  style={inputStyle(!!errors.lastName)}
+                  className={`w-full px-3 py-2.5 rounded-lg outline-none border text-maroon text-sm ${
+                    errors.lastName ? "border-red-500 focus:border-red-500 bg-white" : "border-stone-200 focus:border-gold bg-white"
+                  }`}
                 />
                 {errors.lastName && (
-                  <p className="mt-1 text-red-500" style={{ fontSize: "0.72rem" }}>
+                  <p className="mt-1 text-red-500 text-[0.72rem]">
                     {errors.lastName}
                   </p>
                 )}
@@ -335,66 +221,59 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
             </div>
 
             <div>
-              <label
-                className="block mb-1"
-                style={{ color: NAVY, fontSize: "0.78rem", fontWeight: 600 }}
-              >
+              <label className="block mb-1 text-maroon text-[0.78rem] font-semibold">
                 Email
               </label>
               <div className="relative">
                 <Mail
                   size={15}
-                  className="absolute left-3 top-1/2 -translate-y-1/2"
-                  style={{ color: "#a8a29e" }}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"
                 />
                 <input
                   type="email"
                   value={form.email}
                   onChange={set("email")}
                   placeholder="name@sjp.ac.lk"
-                  className="w-full pl-9 pr-3 py-2.5 rounded-lg outline-none"
-                  style={inputStyle(!!errors.email)}
+                  className={`w-full pl-9 pr-3 py-2.5 rounded-lg outline-none border text-maroon text-sm ${
+                    errors.email ? "border-red-500 focus:border-red-500 bg-white" : "border-stone-200 focus:border-gold bg-white"
+                  }`}
                 />
               </div>
               {errors.email && (
-                <p className="mt-1 text-red-500" style={{ fontSize: "0.72rem" }}>
+                <p className="mt-1 text-red-500 text-[0.72rem]">
                   {errors.email}
                 </p>
               )}
             </div>
 
             <div>
-              <label
-                className="block mb-1"
-                style={{ color: NAVY, fontSize: "0.78rem", fontWeight: 600 }}
-              >
+              <label className="block mb-1 text-maroon text-[0.78rem] font-semibold">
                 Password
               </label>
               <div className="relative">
                 <Lock
                   size={15}
-                  className="absolute left-3 top-1/2 -translate-y-1/2"
-                  style={{ color: "#a8a29e" }}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"
                 />
                 <input
                   type={showPassword ? "text" : "password"}
                   value={form.password}
                   onChange={set("password")}
                   placeholder="Min. 8 characters"
-                  className="w-full pl-9 pr-10 py-2.5 rounded-lg outline-none"
-                  style={inputStyle(!!errors.password)}
+                  className={`w-full pl-9 pr-10 py-2.5 rounded-lg outline-none border text-maroon text-sm ${
+                    errors.password ? "border-red-500 focus:border-red-500 bg-white" : "border-stone-200 focus:border-gold bg-white"
+                  }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((p) => !p)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2"
-                  style={{ color: "#a8a29e" }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 transition-colors"
                 >
                   {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
               {errors.password && (
-                <p className="mt-1 text-red-500" style={{ fontSize: "0.72rem" }}>
+                <p className="mt-1 text-red-500 text-[0.72rem]">
                   {errors.password}
                 </p>
               )}
@@ -403,19 +282,17 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
                   {[1, 2, 3, 4].map((i) => (
                     <div
                       key={i}
-                      className="h-1 flex-1 rounded-full"
-                      style={{
-                        background:
-                          form.password.length >= i * 3
-                            ? i <= 1
-                              ? "#EF4444"
-                              : i <= 2
-                              ? GOLD
-                              : i <= 3
-                              ? "#3B82F6"
-                              : "#10B981"
-                            : "#e7e5e4",
-                      }}
+                      className={`h-1 flex-1 rounded-full ${
+                        form.password.length >= i * 3
+                          ? i <= 1
+                            ? "bg-red-500"
+                            : i <= 2
+                            ? "bg-gold"
+                            : i <= 3
+                            ? "bg-blue-500"
+                            : "bg-emerald-500"
+                          : "bg-stone-200"
+                      }`}
                     />
                   ))}
                 </div>
@@ -423,21 +300,16 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
             </div>
 
             <div>
-              <label
-                className="block mb-1"
-                style={{ color: NAVY, fontSize: "0.78rem", fontWeight: 600 }}
-              >
+              <label className="block mb-1 text-maroon text-[0.78rem] font-semibold">
                 Applied Role
               </label>
               <div className="relative">
                 <select
                   value={form.role}
                   onChange={set("role")}
-                  className="w-full px-3 py-2.5 rounded-lg outline-none appearance-none cursor-pointer"
-                  style={{
-                    ...inputStyle(!!errors.role),
-                    color: form.role ? NAVY : "#a8a29e",
-                  }}
+                  className={`w-full px-3 py-2.5 rounded-lg outline-none border text-sm appearance-none cursor-pointer ${
+                    errors.role ? "border-red-500 focus:border-red-500 bg-white" : "border-stone-200 focus:border-gold bg-white"
+                  } ${form.role ? "text-maroon" : "text-stone-400"}`}
                 >
                   <option value="" disabled>
                     Select your role…
@@ -450,12 +322,11 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
                 </select>
                 <ChevronDown
                   size={15}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
-                  style={{ color: "#a8a29e" }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-stone-400"
                 />
               </div>
               {errors.role && (
-                <p className="mt-1 text-red-500" style={{ fontSize: "0.72rem" }}>
+                <p className="mt-1 text-red-500 text-[0.72rem]">
                   {errors.role}
                 </p>
               )}
@@ -464,15 +335,7 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 rounded-lg flex items-center justify-center gap-2 mt-1 transition-all"
-              style={{
-                background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DARK})`,
-                color: NAVY,
-                fontWeight: 600,
-                fontSize: "0.92rem",
-                boxShadow: "0 6px 20px rgba(245,158,11,0.3)",
-                opacity: isLoading ? 0.7 : 1,
-              }}
+              className={`w-full py-3 rounded-lg flex items-center justify-center gap-2 mt-1 transition-all bg-gradient-to-br from-maroon to-maroon-dark text-white font-bold text-[0.92rem] hover:brightness-110 active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed`}
             >
               {isLoading ? "Submitting…" : (
                 <>
@@ -483,14 +346,11 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
             </button>
           </form>
 
-          <p
-            className="text-center mt-5"
-            style={{ color: "#78716c", fontSize: "0.85rem" }}
-          >
+          <p className="text-center mt-5 text-stone-500 text-sm">
             Already have an account?{" "}
             <button
               onClick={onGoLogin}
-              style={{ color: GOLD_DARK, fontWeight: 600 }}
+              className="text-maroon font-semibold hover:text-maroon-light transition-colors"
             >
               Sign in
             </button>
@@ -498,7 +358,7 @@ export function RegisterScreen({ onBack, onRegisterSuccess, onGoLogin }: Registe
         </motion.div>
 
         {/* Footer */}
-        <div className="flex items-center gap-6 mt-6" style={{ color: "#a8a29e", fontSize: "0.78rem" }}>
+        <div className="flex items-center gap-6 mt-6 text-stone-400 text-[0.78rem]">
           <button className="hover:text-stone-700 transition-colors">Privacy</button>
           <button className="hover:text-stone-700 transition-colors">Terms</button>
           <button className="hover:text-stone-700 transition-colors">Cookies</button>

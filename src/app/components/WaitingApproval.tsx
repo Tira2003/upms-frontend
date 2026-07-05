@@ -1,12 +1,6 @@
 import { motion } from "motion/react";
-
-const FONT = "'Google Sans Flex', sans-serif";
-const GOLD = "#F59E0B";
-const GOLD_DARK = "#D97706";
-const TEXT_PRIMARY = "#111827";
-const TEXT_SECONDARY = "#6B7280";
-const TEXT_MUTED = "#9CA3AF";
-const BORDER = "#E5E7EB";
+import { BackButton } from "./ui/BackButton";
+import { Mail } from "lucide-react";
 
 interface WaitingApprovalProps {
   onBackToLogin: () => void;
@@ -15,10 +9,7 @@ interface WaitingApprovalProps {
 
 export function WaitingApproval({ onBackToLogin, onGoBack }: WaitingApprovalProps) {
   return (
-    <div
-      className="min-h-screen w-full flex items-center justify-center px-6 py-12"
-      style={{ background: "#FFFFFF", fontFamily: FONT }}
-    >
+    <div className="min-h-screen w-full flex items-center justify-center px-6 py-12 bg-stone-50 font-sans">
       <div className="w-full max-w-5xl flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
 
         {/* Left — text content */}
@@ -29,77 +20,32 @@ export function WaitingApproval({ onBackToLogin, onGoBack }: WaitingApprovalProp
           className="flex-1 max-w-lg"
         >
           {/* Label */}
-          <p
-            className="mb-4"
-            style={{ color: GOLD_DARK, fontSize: "0.875rem", fontWeight: 600 }}
-          >
+          <p className="mb-4 text-gold-dark text-sm font-bold uppercase tracking-wider">
             Application submitted
           </p>
 
           {/* Heading */}
-          <h1
-            className="mb-5"
-            style={{
-              color: TEXT_PRIMARY,
-              fontSize: "clamp(2.2rem, 5vw, 3rem)",
-              fontWeight: 700,
-              lineHeight: 1.15,
-              letterSpacing: "-0.02em",
-            }}
-          >
+          <h1 className="mb-5 text-maroon text-[clamp(2.2rem,5vw,3rem)] font-extrabold leading-none tracking-tight">
             Waiting for<br />Approval
           </h1>
 
           {/* Description */}
-          <p
-            className="mb-8 leading-relaxed"
-            style={{ color: TEXT_SECONDARY, fontSize: "1rem" }}
-          >
+          <p className="mb-8 leading-relaxed text-stone-600 text-base">
             Your registration request has been submitted successfully. The system administrator will review your application and notify you via email once it has been approved.
           </p>
 
           {/* Helpful info line */}
-          <p
-            className="mb-8"
-            style={{ color: TEXT_MUTED, fontSize: "0.9rem" }}
-          >
+          <p className="mb-8 text-stone-400 text-sm">
             Here are some helpful links:
           </p>
 
           {/* Buttons */}
           <div className="flex items-center gap-3 flex-wrap">
-            <button
-              onClick={onGoBack ?? onBackToLogin}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-lg transition-all"
-              style={{
-                background: "white",
-                border: `1px solid ${BORDER}`,
-                color: TEXT_PRIMARY,
-                fontWeight: 500,
-                fontSize: "0.9rem",
-                boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
-              }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "#F9FAFB"; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "white"; }}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M19 12H5M12 19l-7-7 7-7" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              Go back
-            </button>
+            <BackButton onClick={onGoBack ?? onBackToLogin} label="Go back" />
 
             <button
               onClick={onBackToLogin}
-              className="px-5 py-2.5 rounded-lg transition-all"
-              style={{
-                background: `linear-gradient(135deg, ${GOLD}, ${GOLD_DARK})`,
-                color: "#fff",
-                fontWeight: 600,
-                fontSize: "0.9rem",
-                boxShadow: `0 6px 20px rgba(245,158,11,0.3)`,
-              }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.boxShadow = `0 8px 24px rgba(245,158,11,0.4)`; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.boxShadow = `0 6px 20px rgba(245,158,11,0.3)`; }}
+              className="px-5 py-2.5 rounded-lg bg-gradient-to-br from-maroon to-maroon-dark text-white font-bold text-sm hover:brightness-110 active:scale-[0.98] transition-all"
             >
               Return to login
             </button>
@@ -115,96 +61,43 @@ export function WaitingApproval({ onBackToLogin, onGoBack }: WaitingApprovalProp
         >
           <div className="relative w-[340px] h-[340px]">
             {/* Scattered small circles */}
-            <div className="absolute w-5 h-5 rounded-full" style={{ background: "#E5E7EB", top: "8%", left: "20%" }} />
-            <div className="absolute w-3 h-3 rounded-full" style={{ background: "#F3F4F6", top: "15%", right: "10%" }} />
-            <div className="absolute w-4 h-4 rounded-full" style={{ background: "#E5E7EB", bottom: "12%", left: "8%" }} />
-            <div className="absolute w-2.5 h-2.5 rounded-full" style={{ background: "#F3F4F6", bottom: "20%", right: "18%" }} />
+            <div className="absolute w-5 h-5 rounded-full bg-maroon/10 top-[8%] left-[20%]" />
+            <div className="absolute w-3 h-3 rounded-full bg-gold/20 top-[15%] right-[10%]" />
+            <div className="absolute w-4 h-4 rounded-full bg-maroon/5 bottom-[12%] left-[8%]" />
+            <div className="absolute w-2.5 h-2.5 rounded-full bg-gold/15 bottom-[20%] right-[18%]" />
 
             {/* Large background circle */}
-            <div
-              className="absolute rounded-full"
-              style={{
-                width: "260px",
-                height: "260px",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -52%)",
-                background: "linear-gradient(145deg, #F9FAFB 0%, #F3F4F6 100%)",
-                boxShadow: "0 8px 40px rgba(0,0,0,0.06)",
-              }}
-            />
+            <div className="absolute rounded-full w-[260px] h-[260px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-[52%] bg-gradient-to-br from-maroon/5 to-maroon/15 shadow-md shadow-maroon/5" />
 
             {/* Second overlapping circle (offset top-right) */}
-            <div
-              className="absolute rounded-full"
-              style={{
-                width: "190px",
-                height: "190px",
-                top: "4%",
-                right: "4%",
-                background: "linear-gradient(145deg, #FFFFFF 0%, #F3F4F6 100%)",
-                boxShadow: "0 4px 24px rgba(0,0,0,0.05)",
-              }}
-            />
+            <div className="absolute rounded-full w-[190px] h-[190px] top-[4%] right-[4%] bg-gradient-to-br from-white to-maroon/5 shadow-sm" />
 
-            {/* Mail icon circle — bottom center, matches the search circle style */}
+            {/* Mail icon circle — bottom center */}
             <motion.div
-              className="absolute rounded-full flex items-center justify-center"
-              style={{
-                width: "80px",
-                height: "80px",
-                bottom: "6%",
-                left: "50%",
-                transform: "translateX(-50%)",
-                background: `linear-gradient(135deg, ${GOLD} 0%, ${GOLD_DARK} 100%)`,
-                boxShadow: `0 8px 28px rgba(245,158,11,0.35)`,
-                zIndex: 10,
-              }}
+              className="absolute rounded-full flex items-center justify-center w-[80px] h-[80px] bottom-[6%] left-1/2 -translate-x-1/2 bg-gradient-to-br from-gold to-gold-dark shadow-lg shadow-gold/35 z-10 text-maroon"
               animate={{ y: [0, -6, 0] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
             >
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" strokeLinecap="round" strokeLinejoin="round" />
-                <polyline points="22,6 12,13 2,6" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+              <Mail size={32} strokeWidth={2.2} />
             </motion.div>
 
             {/* Envelope body — centered in the main circle */}
-            <div
-              className="absolute flex items-center justify-center"
-              style={{
-                width: "130px",
-                height: "95px",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-60%, -58%)",
-                zIndex: 5,
-              }}
-            >
-              <svg viewBox="0 0 130 95" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: "100%", height: "100%" }}>
+            <div className="absolute flex items-center justify-center w-[130px] h-[95px] top-1/2 left-1/2 -translate-x-[60%] -translate-y-[58%] z-5 text-maroon">
+              <svg viewBox="0 0 130 95" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
                 {/* Envelope shadow/body */}
-                <rect x="4" y="8" width="122" height="80" rx="10" fill="#E5E7EB" />
-                <rect x="0" y="4" width="122" height="80" rx="10" fill="white" stroke="#E5E7EB" strokeWidth="1.5" />
+                <rect x="4" y="8" width="122" height="80" rx="10" fill="currentColor" className="text-maroon/5" />
+                <rect x="0" y="4" width="122" height="80" rx="10" fill="white" stroke="currentColor" className="text-maroon/10" strokeWidth="1.5" />
                 {/* Envelope flap lines */}
-                <path d="M0 14 L61 48 L122 14" stroke="#D1D5DB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                <path d="M0 14 L61 48 L122 14" stroke="currentColor" className="text-maroon/20" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
                 {/* Lines suggesting text inside */}
-                <rect x="18" y="56" width="50" height="5" rx="2.5" fill="#F3F4F6" />
-                <rect x="18" y="67" width="36" height="5" rx="2.5" fill="#F3F4F6" />
+                <rect x="18" y="56" width="50" height="5" rx="2.5" fill="currentColor" className="text-maroon/10" />
+                <rect x="18" y="67" width="36" height="5" rx="2.5" fill="currentColor" className="text-maroon/10" />
               </svg>
             </div>
 
             {/* Pulsing ring around mail circle */}
             <motion.div
-              className="absolute rounded-full"
-              style={{
-                width: "80px",
-                height: "80px",
-                bottom: "6%",
-                left: "50%",
-                transform: "translateX(-50%)",
-                border: `2px solid ${GOLD}`,
-                zIndex: 9,
-              }}
+              className="absolute rounded-full w-[80px] h-[80px] bottom-[6%] left-1/2 -translate-x-1/2 border-2 border-gold z-9"
               animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
               transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
             />

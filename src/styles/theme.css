@@ -117,6 +117,18 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Custom Theme Mappings */
+  --font-sans: 'Google Sans Flex', sans-serif;
+  --color-navy: #0a1628;
+  --color-navy-light: #0b1a33;
+  --color-navy-dark: #070f1c;
+  --color-gold: #F59E0B;
+  --color-gold-dark: #D97706;
+  --color-panel: #0d1b3e;
+  --color-maroon: #7A0C0C;
+  --color-maroon-light: #961313;
+  --color-maroon-dark: #5C0808;
 }
 
 @layer base {
