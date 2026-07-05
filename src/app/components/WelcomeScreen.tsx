@@ -7,6 +7,7 @@ import {
   PenLine,
   Check,
 } from "lucide-react";
+import backgroundImg from '../../imports/university-of-sjp-new-main-entrance.jpg';
 
 interface WelcomeScreenProps {
   onLogin: () => void;
@@ -26,8 +27,10 @@ export function WelcomeScreen({
     <div
       className="relative min-h-screen w-full overflow-hidden flex flex-col"
       style={{
-        background:
-          "linear-gradient(180deg, #fafaf9 0%, #f5f5f4 100%)",
+        backgroundImage: `linear-gradient(180deg, rgba(250, 250, 249, 0.96) 0%, rgba(245,245,244,0.55) 100%), url(${backgroundImg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
         fontFamily: FONT,
       }}
     >
@@ -526,7 +529,7 @@ export function WelcomeScreen({
           </div>
         </motion.div>
 
-        
+
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
