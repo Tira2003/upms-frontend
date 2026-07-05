@@ -2,7 +2,7 @@ import {
   LayoutDashboard, FilePlus2, ClipboardList, FileCheck2,
   BadgeCheck, Sliders, Building2, Scale, ClipboardCheck,
   ShieldCheck, PackageCheck, FileText, Send, CreditCard,
-  Settings, LogOut,
+  Settings, LogOut, Search, X,
 } from "lucide-react";
 import { useState } from "react";
 import usjLogo from "../../../usj-logo.png";
@@ -209,10 +209,7 @@ export function Sidebar({ user, activeKey, onNavigate, onSignOut }: SidebarProps
             padding: "8px 12px",
           }}
         >
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2">
-            <circle cx="11" cy="11" r="8" />
-            <path d="M21 21l-4.35-4.35" strokeLinecap="round" />
-          </svg>
+          <Search size={13} strokeWidth={2} color="#9CA3AF" style={{ flexShrink: 0 }} />
           <input
             type="text"
             placeholder="Search..."
@@ -231,8 +228,8 @@ export function Sidebar({ user, activeKey, onNavigate, onSignOut }: SidebarProps
           {search && (
             <button
               onClick={() => setSearch("")}
-              style={{ border: "none", background: "none", cursor: "pointer", color: "#9CA3AF", padding: 0, lineHeight: 1, fontSize: 13 }}
-            >×</button>
+              style={{ border: "none", background: "none", cursor: "pointer", color: "#9CA3AF", padding: 0, lineHeight: 1, display: "flex", alignItems: "center" }}
+            ><X size={12} strokeWidth={2} /></button>
           )}
         </div>
       </div>

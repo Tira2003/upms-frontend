@@ -1,4 +1,5 @@
 import { type ReactNode } from "react";
+import { ClipboardList, Clock, AlertCircle, CheckCircle2 } from "lucide-react";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // StatCard — summary metric widget (Total, Queue, Action Required, Completed)
@@ -69,7 +70,7 @@ export function StatCard({ label, value, highlight = false, icon }: StatCardProp
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// StatCardRow — responsive row of 4 stat cards
+// StatCardRow — responsive row of 4 stat cards with lucide icons
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface StatCardRowProps {
@@ -89,10 +90,10 @@ export function StatCardRow({ total, inQueue, actionRequired, completed }: StatC
         marginBottom: 24,
       }}
     >
-      <StatCard label="Total Procurements" value={total} />
-      <StatCard label="In Your Queue"      value={inQueue} />
-      <StatCard label="Action Required"    value={actionRequired} highlight />
-      <StatCard label="Completed"          value={completed} />
+      <StatCard label="Total Procurements" value={total}          icon={<ClipboardList size={16} strokeWidth={1.8} />} />
+      <StatCard label="In Your Queue"      value={inQueue}        icon={<Clock size={16} strokeWidth={1.8} />} />
+      <StatCard label="Action Required"    value={actionRequired} icon={<AlertCircle size={16} strokeWidth={1.8} />} highlight />
+      <StatCard label="Completed"          value={completed}      icon={<CheckCircle2 size={16} strokeWidth={1.8} />} />
     </div>
   );
 }

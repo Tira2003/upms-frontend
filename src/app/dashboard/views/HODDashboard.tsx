@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, TrendingUp, MoreHorizontal, ArrowUpRight } from "lucide-react";
+import { Plus, TrendingUp, MoreHorizontal, ArrowUpRight, Search, Filter, Building2, ArrowRight, Check, ChevronLeft } from "lucide-react";
 import { WelcomeBanner } from "../components/WelcomeBanner";
 import { StatCardRow } from "../components/StatCard";
 import type { UserContext } from "../types";
@@ -20,7 +20,7 @@ interface HODDashboardProps {
 }
 
 export function HODDashboard({ user, activeTab, onTabChange }: HODDashboardProps) {
-  if (activeTab === "new-requisition") return <NewRequisitionPanel onSubmit={() => onTabChange("dashboard")} />;
+  if (activeTab === "new-requisition") return <NewRequisitionPanel onSubmit={() => onTabChange("dashboard")} user={user} />;
   if (activeTab === "procurements")    return <AllProcurementsPanel />;
   if (activeTab === "quality-report")  return <QualityReportPanel />;
   return <HODOverview user={user} onTabChange={onTabChange} />;
@@ -95,7 +95,7 @@ function HODOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
             {/* Search */}
             <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", border: "1px solid #E5E7EB", borderRadius: 7, background: "#FAFAFA" }}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" strokeLinecap="round"/></svg>
+              <Search size={12} strokeWidth={2} color="#9CA3AF" style={{ flexShrink: 0 }} />
               <input
                 type="text"
                 placeholder="Search..."
@@ -119,7 +119,7 @@ function HODOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k
             </div>
             {/* Filter */}
             <button style={{ display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", border: "1px solid #E5E7EB", borderRadius: 7, background: "#FAFAFA", color: "#374151", fontSize: 12, cursor: "pointer" }}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+              <Filter size={12} strokeWidth={2} />
               Filter
             </button>
           </div>
@@ -246,10 +246,7 @@ function HeroStatCard({ title, subtitle, value, badge, badgeUp, linkLabel, onCli
             justifyContent: "center",
           }}
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2">
-            <rect x="2" y="7" width="20" height="14" rx="2" />
-            <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" />
-          </svg>
+          <Building2 size={18} strokeWidth={2} color="#F59E0B" />
         </div>
         <button style={{ border: "none", background: "none", cursor: "pointer", color: "rgba(255,255,255,0.4)" }}>
           <MoreHorizontal size={16} />
@@ -364,58 +361,512 @@ const thStyle: React.CSSProperties = {
 };
 
 // ── Sub-panels ────────────────────────────────────────────────────────────────
-function NewRequisitionPanel({ onSubmit }: { onSubmit: () => void }) {
-  const [form, setForm] = useState({ title: "", faculty: "", department: "", description: "", value: "", justification: "" });
-  const [submitted, setSubmitted] = useState(false);
 
+// ── Multi-step Requisition Form ───────────────────────────────────────────────
+const STEPS = [
+  { label: "Basic Info",       icon: "📋" },
+  { label: "Product Details",  icon: "📦" },
+  { label: "Quantity & Value", icon: "💰" },
+  { label: "Review & Sign",    icon: "✍️" },
+];
+
+function StepIndicator({ current, total }: { current: number; total: number }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 0, marginBottom: 32 }}>
+      {STEPS.map((step, i) => {
+        const done    = i < current;
+        const active  = i === current;
+        const last    = i === total - 1;
+        return (
+          <div key={i} style={{ display: "flex", alignItems: "center", flex: last ? "0 0 auto" : 1 }}>
+            {/* Circle */}
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+              <div
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: "50%",
+                  background: done ? "#7A0C0C" : active ? "#7A0C0C" : "#F3F4F6",
+                  border: active ? "2.5px solid #7A0C0C" : done ? "2.5px solid #7A0C0C" : "2px solid #D1D5DB",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: done ? 14 : 13,
+                  color: done || active ? "#FFFFFF" : "#B0B7C3",
+                  fontWeight: 700,
+                  flexShrink: 0,
+                  transition: "all 0.25s ease",
+                  boxShadow: "none",
+                }}
+              >
+                {done ? <Check size={15} strokeWidth={3} /> : i + 1}
+              </div>
+              <span style={{
+                fontSize: 12,
+                fontWeight: active ? 700 : 500,
+                color: active ? "#7A0C0C" : done ? "#6B7280" : "#B0B7C3",
+                whiteSpace: "nowrap",
+              }}>
+                {step.label}
+              </span>
+            </div>
+            {/* Connector bar */}
+            {!last && (
+              <div style={{
+                flex: 1,
+                height: 3,
+                marginBottom: 22,
+                marginLeft: 4,
+                marginRight: 4,
+                borderRadius: 4,
+                background: done ? "#7A0C0C" : "#E5E7EB",
+                transition: "background 0.3s ease",
+              }} />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+interface ReqForm {
+  title: string;
+  faculty: string;
+  department: string;
+  description: string;
+  reason: string;
+  quantity: string;
+  unit: string;
+  approxValue: string;
+  preparedBy: string;
+  signature: string;
+}
+
+function NewRequisitionPanel({ onSubmit, user }: { onSubmit: () => void; user?: { name?: string; title?: string; department?: string; faculty?: string } }) {
+  const hodName = user?.name ?? "Dr. Nimal Perera";
+
+  const [step, setStep]       = useState(0);
+  const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors]   = useState<Partial<Record<keyof ReqForm, string>>>({});
+  const [form, setForm]       = useState<ReqForm>({
+    title:       "",
+    faculty:     user?.faculty ?? "",
+    department:  user?.department ?? "",
+    description: "",
+    reason:      "",
+    quantity:    "",
+    unit:        "units",
+    approxValue: "",
+    preparedBy:  hodName,
+    signature:   "",
+  });
+
+  const set = (key: keyof ReqForm) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+    setForm(p => ({ ...p, [key]: e.target.value }));
+
+  // Per-step validation
+  const validate = (s: number): boolean => {
+    const e: Partial<Record<keyof ReqForm, string>> = {};
+    if (s === 0) {
+      if (!form.title.trim())    e.title    = "Requisition title is required.";
+      if (!form.faculty.trim())  e.faculty  = "Please select a faculty.";
+    }
+    if (s === 1) {
+      if (!form.description.trim()) e.description = "Product description is required.";
+      if (!form.reason.trim())      e.reason      = "Reason for requisition is required.";
+    }
+    if (s === 2) {
+      if (!form.quantity.trim() || isNaN(Number(form.quantity)) || Number(form.quantity) <= 0)
+        e.quantity = "Enter a valid quantity.";
+      if (!form.approxValue.trim() || isNaN(Number(form.approxValue)) || Number(form.approxValue) <= 0)
+        e.approxValue = "Enter a valid approximate value.";
+    }
+    if (s === 3) {
+      if (!form.signature.trim()) e.signature = "Signature is required to submit.";
+    }
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const next = () => { if (validate(step)) setStep(s => Math.min(s + 1, STEPS.length - 1)); };
+  const back = () => { setErrors({}); setStep(s => Math.max(s - 1, 0)); };
+
+  const handleSubmit = () => {
+    if (validate(3)) setSubmitted(true);
+  };
+
+  // ── Success screen ──────────────────────────────────────────────────────────
   if (submitted) {
     return (
       <div style={{ padding: "28px 28px" }}>
-        <div style={{ maxWidth: 500, margin: "40px auto", background: "#FFFFFF", borderRadius: 14, padding: "40px", textAlign: "center", border: "1px solid #F1F5F9" }}>
-          <div style={{ fontSize: 40, marginBottom: 12 }}>✅</div>
-          <h3 style={{ fontSize: 18, fontWeight: 800, color: "#111827", margin: 0, marginBottom: 8 }}>Requisition Submitted!</h3>
-          <p style={{ fontSize: 13, color: "#6B7280", margin: "0 0 20px" }}>Sent to the Bursar for fund verification.</p>
-          <button onClick={onSubmit} style={{ padding: "10px 24px", background: "#7A0C0C", color: "#FFFFFF", border: "none", borderRadius: 9, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>Back to Dashboard</button>
+        <div style={{
+          maxWidth: 540,
+          margin: "40px auto",
+          background: "#FFFFFF",
+          borderRadius: 18,
+          padding: "48px 40px",
+          textAlign: "center",
+          border: "1px solid #F1F5F9",
+          boxShadow: "0 4px 24px rgba(0,0,0,0.07)",
+        }}>
+          <div style={{
+            width: 72, height: 72, borderRadius: "50%",
+            background: "linear-gradient(135deg,#7A0C0C,#C53030)",
+            margin: "0 auto 20px",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 32, boxShadow: "0 8px 24px rgba(122,12,12,0.25)",
+          }}>✅</div>
+          <h3 style={{ fontSize: 20, fontWeight: 800, color: "#111827", margin: "0 0 8px" }}>Requisition Submitted!</h3>
+          <p style={{ fontSize: 13, color: "#6B7280", margin: "0 0 6px" }}>
+            <strong style={{ color: "#374151" }}>{form.title}</strong>
+          </p>
+          <p style={{ fontSize: 12, color: "#9CA3AF", margin: "0 0 28px" }}>Sent to the Bursar for fund verification.</p>
+          <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
+            <button
+              onClick={onSubmit}
+              style={{ padding: "11px 28px", background: "#7A0C0C", color: "#FFFFFF", border: "none", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer" }}
+            >
+              Back to Dashboard
+            </button>
+          </div>
         </div>
       </div>
     );
   }
 
+  // ── Main form shell ─────────────────────────────────────────────────────────
   return (
-    <div style={{ padding: "28px 28px" }}>
-      <PageTitleBar title="New Requisition" subtitle="Complete the form to create a purchase requisition" />
-      <div style={{ maxWidth: 720, background: "#FFFFFF", border: "1px solid #F1F5F9", borderRadius: 14, padding: "28px", display: "flex", flexDirection: "column", gap: 18 }}>
-        <FormRow label="Requisition Title" required>
-          <input required value={form.title} onChange={e => setForm(p => ({ ...p, title: e.target.value }))} placeholder="e.g. Laboratory Microscopes — Biology Dept" style={inputStyle} />
-        </FormRow>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-          <FormRow label="Faculty" required>
-            <select required value={form.faculty} onChange={e => setForm(p => ({ ...p, faculty: e.target.value }))} style={inputStyle}>
-              <option value="">Select faculty…</option>
-              {["Faculty of Applied Sciences","Faculty of Management Studies","Faculty of Engineering","Faculty of Humanities","Faculty of Medical Sciences"].map(f => <option key={f}>{f}</option>)}
-            </select>
-          </FormRow>
-          <FormRow label="Department">
-            <input value={form.department} onChange={e => setForm(p => ({ ...p, department: e.target.value }))} placeholder="e.g. Biology" style={inputStyle} />
-          </FormRow>
-        </div>
-        <FormRow label="Estimated Value (LKR)" required>
-          <input required type="number" value={form.value} onChange={e => setForm(p => ({ ...p, value: e.target.value }))} placeholder="e.g. 320000" style={inputStyle} />
-        </FormRow>
-        <FormRow label="Description" required>
-          <textarea required rows={3} value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="Describe items/services required…" style={{ ...inputStyle, resize: "vertical" as const }} />
-        </FormRow>
-        <FormRow label="Justification">
-          <textarea rows={2} value={form.justification} onChange={e => setForm(p => ({ ...p, justification: e.target.value }))} placeholder="Why is this procurement necessary?" style={{ ...inputStyle, resize: "vertical" as const }} />
-        </FormRow>
-        <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-          <button type="button" onClick={onSubmit} style={{ padding: "9px 20px", background: "#F3F4F6", color: "#374151", border: "1px solid #E5E7EB", borderRadius: 9, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Cancel</button>
-          <button type="button" onClick={() => { if (form.title && form.value) setSubmitted(true); }} style={{ padding: "9px 24px", background: "#7A0C0C", color: "#FFFFFF", border: "none", borderRadius: 9, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>Submit Requisition</button>
+    <div style={{ padding: "28px 28px 48px" }}>
+      <PageTitleBar title="New Requisition" subtitle="Complete all steps to create a purchase requisition" />
+
+      <div style={{
+        maxWidth: 760,
+        background: "#FFFFFF",
+        border: "1px solid #F1F5F9",
+        borderRadius: 18,
+        padding: "32px 36px 28px",
+        boxShadow: "0 2px 12px rgba(0,0,0,0.05)",
+      }}>
+
+        {/* ── Step indicator ── */}
+        <StepIndicator current={step} total={STEPS.length} />
+
+        {/* ── Step panels ── */}
+        {step === 0 && (
+          <StepCard title="Basic Information" subtitle="Enter the requisition title, faculty and department">
+            <MField label="Requisition Title" error={errors.title} required>
+              <input
+                value={form.title}
+                onChange={set("title")}
+                placeholder="e.g. Laboratory Microscopes — Biology Dept"
+                style={mInput(!!errors.title)}
+              />
+            </MField>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+              <MField label="Faculty" error={errors.faculty} required>
+                <select value={form.faculty} onChange={set("faculty")} style={mInput(!!errors.faculty)}>
+                  <option value="">Select faculty…</option>
+                  {["Faculty of Applied Sciences","Faculty of Management Studies","Faculty of Engineering","Faculty of Humanities","Faculty of Medical Sciences"].map(f => (
+                    <option key={f}>{f}</option>
+                  ))}
+                </select>
+              </MField>
+              <MField label="Department">
+                <input
+                  value={form.department}
+                  onChange={set("department")}
+                  placeholder="e.g. Computer Science"
+                  style={mInput(false)}
+                />
+              </MField>
+            </div>
+          </StepCard>
+        )}
+
+        {step === 1 && (
+          <StepCard title="Product Details" subtitle="Describe the product/service and state the reason for requisition">
+            <MField label="Description of Product / Service" error={errors.description} required>
+              <textarea
+                rows={4}
+                value={form.description}
+                onChange={set("description")}
+                placeholder="Describe the items or services required in detail…"
+                style={{ ...mInput(!!errors.description), resize: "vertical" as const }}
+              />
+            </MField>
+            <MField label="Reason for Requisition" error={errors.reason} required>
+              <textarea
+                rows={3}
+                value={form.reason}
+                onChange={set("reason")}
+                placeholder="Why is this procurement necessary? (e.g. existing equipment failure, new project requirement…)"
+                style={{ ...mInput(!!errors.reason), resize: "vertical" as const }}
+              />
+            </MField>
+          </StepCard>
+        )}
+
+        {step === 2 && (
+          <StepCard title="Quantity & Value" subtitle="Specify the quantity required and approximate cost">
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+              <MField label="Quantity Required" error={errors.quantity} required>
+                <input
+                  type="number"
+                  min={1}
+                  value={form.quantity}
+                  onChange={set("quantity")}
+                  placeholder="e.g. 10"
+                  style={mInput(!!errors.quantity)}
+                />
+              </MField>
+              <MField label="Unit of Measure">
+                <select value={form.unit} onChange={set("unit")} style={mInput(false)}>
+                  {["units","boxes","sets","litres","kg","metres","packets","pairs"].map(u => (
+                    <option key={u}>{u}</option>
+                  ))}
+                </select>
+              </MField>
+            </div>
+            <MField label="Approximate Value (LKR)" error={errors.approxValue} required>
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", fontSize: 13, fontWeight: 600, color: "#6B7280" }}>LKR</span>
+                <input
+                  type="number"
+                  min={0}
+                  value={form.approxValue}
+                  onChange={set("approxValue")}
+                  placeholder="e.g. 320000"
+                  style={{ ...mInput(!!errors.approxValue), paddingLeft: 48 }}
+                />
+              </div>
+            </MField>
+            {form.approxValue && !isNaN(Number(form.approxValue)) && Number(form.approxValue) > 0 && (
+              <div style={{
+                padding: "12px 16px",
+                background: "linear-gradient(135deg,#FFF7ED,#FEF3C7)",
+                border: "1px solid #FDE68A",
+                borderRadius: 10,
+                fontSize: 12,
+                color: "#92400E",
+                fontWeight: 600,
+              }}>
+                💡 Estimated value:{" "}
+                <span style={{ fontWeight: 800 }}>
+                  LKR {Number(form.approxValue).toLocaleString("en-LK")}
+                </span>
+                {Number(form.approxValue) >= 500000
+                  ? " — This will require TEC evaluation."
+                  : " — HOD can directly approve this requisition."}
+              </div>
+            )}
+          </StepCard>
+        )}
+
+        {step === 3 && (
+          <StepCard title="Review & Sign" subtitle="Review your requisition details and sign before submitting">
+            {/* Review summary */}
+            <div style={{
+              background: "#F9FAFB",
+              border: "1px solid #E5E7EB",
+              borderRadius: 12,
+              padding: "20px 24px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 12,
+              marginBottom: 20,
+            }}>
+              <ReviewRow label="Requisition Title"      value={form.title} />
+              <ReviewRow label="Faculty"                value={form.faculty} />
+              <ReviewRow label="Department"             value={form.department || "—"} />
+              <div style={{ borderTop: "1px solid #E5E7EB", paddingTop: 12 }} />
+              <ReviewRow label="Description"            value={form.description} multiline />
+              <ReviewRow label="Reason for Requisition" value={form.reason} multiline />
+              <div style={{ borderTop: "1px solid #E5E7EB", paddingTop: 12 }} />
+              <ReviewRow label="Quantity Required"      value={`${form.quantity} ${form.unit}`} />
+              <ReviewRow label="Approximate Value"      value={`LKR ${Number(form.approxValue || 0).toLocaleString("en-LK")}`} highlight />
+            </div>
+
+            {/* Prepared By (pre-filled, read-only) */}
+            <MField label="Requisition Prepared By (Head of Department)">
+              <input
+                value={form.preparedBy}
+                readOnly
+                style={{ ...mInput(false), background: "#F9FAFB", color: "#374151", fontWeight: 600, cursor: "not-allowed" }}
+              />
+            </MField>
+
+            {/* Signature */}
+            <MField label="Signature (type your full name to sign)" error={errors.signature} required>
+              <div style={{ position: "relative" }}>
+                <input
+                  value={form.signature}
+                  onChange={set("signature")}
+                  placeholder="Type your full name as signature…"
+                  style={{
+                    ...mInput(!!errors.signature),
+                    fontFamily: "Georgia, 'Times New Roman', serif",
+                    fontStyle: "italic",
+                    fontSize: 16,
+                    letterSpacing: "0.04em",
+                    paddingLeft: 48,
+                    color: "#1E3A5F",
+                  }}
+                />
+                <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", fontSize: 18 }}>✍️</span>
+              </div>
+              {form.signature && (
+                <div style={{
+                  marginTop: 8,
+                  padding: "10px 14px",
+                  background: "#FAFAFA",
+                  border: "1px dashed #D1D5DB",
+                  borderRadius: 8,
+                  fontFamily: "Georgia, serif",
+                  fontStyle: "italic",
+                  fontSize: 17,
+                  color: "#1E3A5F",
+                  letterSpacing: "0.05em",
+                }}>
+                  {form.signature}
+                </div>
+              )}
+            </MField>
+
+            {/* Declaration */}
+            <div style={{
+              padding: "12px 16px",
+              background: "#F0FDF4",
+              border: "1px solid #BBF7D0",
+              borderRadius: 10,
+              fontSize: 11,
+              color: "#166534",
+              lineHeight: 1.6,
+            }}>
+              <strong>Declaration:</strong> I hereby certify that the above requisition is genuine and within the approved budget allocation for my department. This requisition will be forwarded to the Bursar for fund verification.
+            </div>
+          </StepCard>
+        )}
+
+        {/* ── Navigation buttons ── */}
+        <div style={{ display: "flex", gap: 10, justifyContent: "space-between", marginTop: 24 }}>
+          <button
+            type="button"
+            onClick={step === 0 ? onSubmit : back}
+            style={{
+              padding: "10px 22px",
+              background: "#F3F4F6",
+              color: "#374151",
+              border: "1px solid #E5E7EB",
+              borderRadius: 10,
+              fontSize: 13,
+              fontWeight: 600,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+            }}
+          >
+            {step === 0 ? "Cancel" : <><ChevronLeft size={15} strokeWidth={2.5} /> Back</>}
+          </button>
+
+          {step < STEPS.length - 1 ? (
+            <button
+              type="button"
+              onClick={next}
+              style={{
+                padding: "10px 28px",
+                background: "#7A0C0C",
+                color: "#FFFFFF",
+                border: "none",
+                borderRadius: 10,
+                fontSize: 13,
+                fontWeight: 700,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              Next <ArrowRight size={14} strokeWidth={2.5} />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleSubmit}
+              style={{
+                padding: "10px 28px",
+                background: "#7A0C0C",
+                color: "#FFFFFF",
+                border: "none",
+                borderRadius: 10,
+                fontSize: 13,
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
+              Submit Requisition
+            </button>
+          )}
         </div>
       </div>
     </div>
   );
 }
+
+// ── Helper UI components for the multi-step form ──────────────────────────────
+function StepCard({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <div style={{ marginBottom: 4 }}>
+        <h3 style={{ fontSize: 16, fontWeight: 800, color: "#111827", margin: "0 0 4px" }}>{title}</h3>
+        <p style={{ fontSize: 12, color: "#6B7280", margin: 0 }}>{subtitle}</p>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function MField({ label, error, required, children }: { label: string; error?: string; required?: boolean; children: React.ReactNode }) {
+  return (
+    <div>
+      <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#374151", marginBottom: 6 }}>
+        {label}{required && <span style={{ color: "#EF4444", marginLeft: 2 }}>*</span>}
+      </label>
+      {children}
+      {error && <p style={{ margin: "5px 0 0", fontSize: 11, color: "#DC2626", fontWeight: 500 }}>⚠ {error}</p>}
+    </div>
+  );
+}
+
+function ReviewRow({ label, value, multiline, highlight }: { label: string; value: string; multiline?: boolean; highlight?: boolean }) {
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "160px 1fr", gap: 8, alignItems: multiline ? "flex-start" : "center" }}>
+      <span style={{ fontSize: 11, fontWeight: 600, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.05em" }}>{label}</span>
+      <span style={{
+        fontSize: 13,
+        fontWeight: highlight ? 800 : 500,
+        color: highlight ? "#B45309" : "#111827",
+        wordBreak: "break-word",
+        whiteSpace: multiline ? "pre-wrap" : "normal",
+      }}>{value}</span>
+    </div>
+  );
+}
+
+const mInput = (hasError: boolean): React.CSSProperties => ({
+  width: "100%",
+  padding: "10px 13px",
+  border: `1.5px solid ${hasError ? "#EF4444" : "#E5E7EB"}`,
+  borderRadius: 9,
+  fontSize: 13,
+  color: "#111827",
+  background: "#FFFFFF",
+  outline: "none",
+  boxSizing: "border-box",
+  fontFamily: "inherit",
+  transition: "border-color 0.2s",
+});
 
 function AllProcurementsPanel() {
   return (

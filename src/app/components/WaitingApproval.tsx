@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { BackButton } from "./ui/BackButton";
+import { Mail } from "lucide-react";
 
 interface WaitingApprovalProps {
   onBackToLogin: () => void;
@@ -77,10 +78,7 @@ export function WaitingApproval({ onBackToLogin, onGoBack }: WaitingApprovalProp
               animate={{ y: [0, -6, 0] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
             >
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" strokeLinecap="round" strokeLinejoin="round" />
-                <polyline points="22,6 12,13 2,6" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+              <Mail size={32} strokeWidth={2.2} />
             </motion.div>
 
             {/* Envelope body — centered in the main circle */}

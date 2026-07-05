@@ -1,3 +1,5 @@
+import { Layers, Inbox, CheckCircle2 } from "lucide-react";
+
 // ─────────────────────────────────────────────────────────────────────────────
 // EmptyState — placeholder for stub / coming-soon panels
 // ─────────────────────────────────────────────────────────────────────────────
@@ -9,26 +11,10 @@ interface EmptyStateProps {
   icon?: "construction" | "inbox" | "check";
 }
 
-const ICONS = {
-  construction: (
-    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="1.4">
-      <path d="M12 2L2 7l10 5 10-5-10-5z" />
-      <path d="M2 17l10 5 10-5" strokeLinecap="round" />
-      <path d="M2 12l10 5 10-5" strokeLinecap="round" />
-    </svg>
-  ),
-  inbox: (
-    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="1.4">
-      <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z" strokeLinecap="round" />
-    </svg>
-  ),
-  check: (
-    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="1.4">
-      <path d="M22 11.08V12a10 10 0 11-5.93-9.14" strokeLinecap="round" />
-      <polyline points="22 4 12 14.01 9 11.01" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  ),
+const ICONS: Record<string, React.ReactNode> = {
+  construction: <Layers size={40} strokeWidth={1.4} color="#D1D5DB" />,
+  inbox:        <Inbox size={40} strokeWidth={1.4} color="#D1D5DB" />,
+  check:        <CheckCircle2 size={40} strokeWidth={1.4} color="#D1D5DB" />,
 };
 
 export function EmptyState({ title, description, action, icon = "construction" }: EmptyStateProps) {
