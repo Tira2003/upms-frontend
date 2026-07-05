@@ -30,7 +30,7 @@ export function SupplierDashboard({ user, activeTab, onTabChange, onViewProcurem
 }
 
 function SupplierOverview({ user, onTabChange, onViewProcurement }: { user: UserContext; onTabChange: (k: string) => void; onViewProcurement: (id: string) => void }) {
-  const openTenders = getProcurementsForRole("SUP");
+  const openTenders = getProcurementsForRole(user);
   return (
     <div style={{ padding: "28px 32px" }}>
       <WelcomeBanner user={user} />

@@ -6,7 +6,7 @@ import { ActionQueueList } from "../components/ActionQueueList";
 import { ProcurementTable } from "../components/ProcurementTable";
 import { StatusBadge } from "../components/StatusBadge";
 import { PageTitleBar } from "../components/ContentHeader";
-import { MOCK_PROCUREMENTS, getActionQueueForRole, formatLKR } from "../data";
+import { MOCK_PROCUREMENTS, getActionQueueForRole, getProcurementsForRole, formatLKR } from "../data";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Bursar Dashboard — Fund Verification
@@ -21,24 +21,26 @@ interface BursarDashboardProps {
 }
 
 export function BursarDashboard({ user, activeTab, onTabChange, onViewProcurement, onViewProcurementDetails }: BursarDashboardProps) {
-  if (activeTab === "fund-verification") return <FundVerificationPanel onViewProcurementDetails={onViewProcurementDetails} />;
-  if (activeTab === "procurements")      return <AllProcurementsPanel onViewProcurement={onViewProcurement} />;
+  if (activeTab === "fund-verification") return <FundVerificationPanel onViewProcurementDetails={onViewProcurementDetails} user={user} />;
+  if (activeTab === "procurements")      return <AllProcurementsPanel onViewProcurement={onViewProcurement} user={user} />;
   return <BursarOverview user={user} onTabChange={onTabChange} />;
 }
 
 function BursarOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k: string) => void }) {
-  const queue = getActionQueueForRole("BUR");
+  const queue = getActionQueueForRole(user);
+  const myProcurements = getProcurementsForRole(user);
   return (
     <div style={{ padding: "28px 28px" }}>
       <WelcomeBanner user={user} />
-      <StatCardRow total={MOCK_PROCUREMENTS.length} inQueue={queue.length} actionRequired={queue.length} completed={0} />
+      <StatCardRow total={myProcurements.length} inQueue={queue.length} actionRequired={queue.length} completed={0} />
       <ActionQueueList items={queue} onViewAll={() => onTabChange("fund-verification")} onItemClick={() => onTabChange("fund-verification")} />
     </div>
   );
 }
 
-function FundVerificationPanel({ onViewProcurementDetails }: { onViewProcurementDetails: (id: string) => void }) {
-  const pending = MOCK_PROCUREMENTS.filter(p => p.status === "Pending Fund Verification");
+function FundVerificationPanel({ onViewProcurementDetails, user }: { onViewProcurementDetails: (id: string) => void; user: UserContext }) {
+  const myProcurements = getProcurementsForRole(user);
+  const pending = myProcurements.filter(p => p.status === "Pending Fund Verification");
   const [selected, setSelected] = useState<Procurement | null>(pending[0] ?? null);
   const [budgetCode, setBudgetCode] = useState("");
   const [availableFunds, setAvailableFunds] = useState("");
@@ -47,6 +49,20 @@ function FundVerificationPanel({ onViewProcurementDetails }: { onViewProcurement
 
   const handleVerify = () => {
     if (!selected) return;
+    selected.status = "Funds Verified";
+    selected.budgetCode = budgetCode;
+    selected.updatedAt = new Date().toISOString();
+    selected.activityLogs = [
+      {
+        id: `log-bur-${Date.now()}`,
+        stepIndex: 1,
+        actor: user.name,
+        role: user.role === "FBUR" ? "Faculty Bursar" : "Bursar",
+        action: `Funds verified. Budget code: ${budgetCode}. Available allocation: ${formatLKR(Number(availableFunds))}.`,
+        timestamp: new Date().toISOString(),
+      },
+      ...(selected.activityLogs ?? []),
+    ];
     setVerified(p => new Set([...p, selected.id]));
     setSelected(null);
     setBudgetCode("");
@@ -55,6 +71,19 @@ function FundVerificationPanel({ onViewProcurementDetails }: { onViewProcurement
 
   const handleReject = () => {
     if (!selected) return;
+    selected.status = "Rejected";
+    selected.updatedAt = new Date().toISOString();
+    selected.activityLogs = [
+      {
+        id: `log-bur-${Date.now()}`,
+        stepIndex: -1,
+        actor: user.name,
+        role: user.role === "FBUR" ? "Faculty Bursar" : "Bursar",
+        action: "Fund verification rejected due to insufficient budget allocation.",
+        timestamp: new Date().toISOString(),
+      },
+      ...(selected.activityLogs ?? []),
+    ];
     setRejected(p => new Set([...p, selected.id]));
     setSelected(null);
   };
@@ -144,12 +173,13 @@ function FundVerificationPanel({ onViewProcurementDetails }: { onViewProcurement
   );
 }
 
-function AllProcurementsPanel({ onViewProcurement }: { onViewProcurement: (id: string) => void }) {
+function AllProcurementsPanel({ onViewProcurement, user }: { onViewProcurement: (id: string) => void; user: UserContext }) {
+  const list = getProcurementsForRole(user);
   return (
     <div style={{ padding: "28px 28px" }}>
-      <PageTitleBar title="All Procurements" subtitle={`${MOCK_PROCUREMENTS.length} records visible for your role`} />
+      <PageTitleBar title="All Procurements" subtitle={`${list.length} records visible for your role`} />
       <div style={{ background: "#FFFFFF", borderRadius: 14, border: "1px solid #F1F5F9", overflow: "hidden" }}>
-        <ProcurementTable procurements={MOCK_PROCUREMENTS} title="" subtitle="" onViewProcurement={onViewProcurement} />
+        <ProcurementTable procurements={list} title="" subtitle="" onViewProcurement={onViewProcurement} />
       </div>
     </div>
   );

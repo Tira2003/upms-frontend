@@ -4,7 +4,7 @@ import { StatCardRow } from "../components/StatCard";
 import { ActionQueueList } from "../components/ActionQueueList";
 import { ProcurementTable } from "../components/ProcurementTable";
 import { EmptyState } from "../components/EmptyState";
-import { MOCK_PROCUREMENTS, getActionQueueForRole } from "../data";
+import { MOCK_PROCUREMENTS, getActionQueueForRole, getProcurementsForRole } from "../data";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SDC Dashboard — Supplies Division Clerk
@@ -20,28 +20,29 @@ interface SDCDashboardProps {
 }
 
 export function SDCDashboard({ user, activeTab, onTabChange, onViewProcurement, onViewProcurementDetails }: SDCDashboardProps) {
-  if (activeTab === "method")       return <MethodSelectionPanel onViewProcurementDetails={onViewProcurementDetails} />;
+  if (activeTab === "method")       return <MethodSelectionPanel onViewProcurementDetails={onViewProcurementDetails} user={user} />;
   if (activeTab === "suppliers")    return <SuppliersPanel />;
-  if (activeTab === "bidding")      return <BiddingPanel onViewProcurement={onViewProcurement} />;
-  if (activeTab === "procurements") return <AllProcurementsPanel onViewProcurement={onViewProcurement} />;
+  if (activeTab === "bidding")      return <BiddingPanel onViewProcurement={onViewProcurement} user={user} />;
+  if (activeTab === "procurements") return <AllProcurementsPanel onViewProcurement={onViewProcurement} user={user} />;
   return <SDCOverview user={user} onTabChange={onTabChange} />;
 }
 
 function SDCOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k: string) => void }) {
-  const queue = getActionQueueForRole("SDC");
-  const biddingOpen = MOCK_PROCUREMENTS.filter(p => p.status === "Bidding Open");
+  const queue = getActionQueueForRole(user);
+  const myProcurements = getProcurementsForRole(user);
+  const biddingOpen = myProcurements.filter(p => p.status === "Bidding Open");
 
   return (
     <div style={{ padding: "28px 32px" }}>
       <WelcomeBanner user={user} />
       <StatCardRow
-        total={MOCK_PROCUREMENTS.length}
+        total={myProcurements.length}
         inQueue={queue.length}
         actionRequired={biddingOpen.length}
         completed={1}
       />
       <ActionQueueList
-        items={[...queue, ...MOCK_PROCUREMENTS.filter(p => p.status === "Funds Verified")]}
+        items={[...queue, ...myProcurements.filter(p => p.status === "Funds Verified")]}
         onViewAll={() => onTabChange("bidding")}
       />
       {/* Quick stats */}
@@ -61,8 +62,29 @@ function SDCOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k
   );
 }
 
-function MethodSelectionPanel({ onViewProcurementDetails }: { onViewProcurementDetails: (id: string) => void }) {
-  const eligible = MOCK_PROCUREMENTS.filter(p => p.status === "Funds Verified");
+function MethodSelectionPanel({ onViewProcurementDetails, user }: { onViewProcurementDetails: (id: string) => void; user: UserContext }) {
+  const myProcurements = getProcurementsForRole(user);
+  const eligible = myProcurements.filter(p => p.status === "Funds Verified");
+  const [selectedMethods, setSelectedMethods] = useState<Record<string, string>>({});
+
+  const handleSelectMethod = (pr: any, method: string) => {
+    pr.method = method;
+    pr.status = "Bidding Open";
+    pr.updatedAt = new Date().toISOString();
+    pr.activityLogs = [
+      {
+        id: `log-sdc-${Date.now()}`,
+        stepIndex: 2,
+        actor: user.name,
+        role: "Supplies division",
+        action: `Procurement method selected: ${method}. Tender opened for bid submissions.`,
+        timestamp: new Date().toISOString(),
+      },
+      ...(pr.activityLogs ?? []),
+    ];
+    setSelectedMethods(p => ({ ...p, [pr.id]: method }));
+  };
+
   return (
     <div style={{ padding: "28px 32px" }}>
       <div style={{ marginBottom: 20 }}>
@@ -101,6 +123,7 @@ function MethodSelectionPanel({ onViewProcurementDetails }: { onViewProcurementD
                   {["Shopping", "NCB", "ICB"].map(m => (
                     <button
                       key={m}
+                      onClick={() => handleSelectMethod(pr, m)}
                       style={{
                         padding: "6px 14px",
                         fontSize: 12,
@@ -168,8 +191,9 @@ function SuppliersPanel() {
   );
 }
 
-function BiddingPanel({ onViewProcurement }: { onViewProcurement: (id: string) => void }) {
-  const biddingItems = MOCK_PROCUREMENTS.filter(p => p.status === "Bidding Open" || p.status === "Funds Verified");
+function BiddingPanel({ onViewProcurement, user }: { onViewProcurement: (id: string) => void; user: UserContext }) {
+  const myProcurements = getProcurementsForRole(user);
+  const biddingItems = myProcurements.filter(p => p.status === "Bidding Open" || p.status === "Funds Verified");
 
   return (
     <div style={{ padding: "28px 32px" }}>
@@ -182,14 +206,15 @@ function BiddingPanel({ onViewProcurement }: { onViewProcurement: (id: string) =
   );
 }
 
-function AllProcurementsPanel({ onViewProcurement }: { onViewProcurement: (id: string) => void }) {
+function AllProcurementsPanel({ onViewProcurement, user }: { onViewProcurement: (id: string) => void; user: UserContext }) {
+  const list = getProcurementsForRole(user);
   return (
     <div style={{ padding: "28px 32px" }}>
       <div style={{ marginBottom: 20 }}>
         <h1 style={{ fontSize: 18, fontWeight: 700, color: "#111827", margin: 0, marginBottom: 2 }}>All Procurements</h1>
-        <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>{MOCK_PROCUREMENTS.length} records visible for your role</p>
+        <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>{list.length} records visible for your role</p>
       </div>
-      <ProcurementTable procurements={MOCK_PROCUREMENTS} title="" subtitle="" onViewProcurement={onViewProcurement} />
+      <ProcurementTable procurements={list} title="" subtitle="" onViewProcurement={onViewProcurement} />
     </div>
   );
 }

@@ -5,7 +5,7 @@ import { StatCardRow } from "../components/StatCard";
 import { ActionQueueList } from "../components/ActionQueueList";
 import { ProcurementTable } from "../components/ProcurementTable";
 import { EmptyState } from "../components/EmptyState";
-import { MOCK_PROCUREMENTS, getActionQueueForRole, formatLKR } from "../data";
+import { MOCK_PROCUREMENTS, getActionQueueForRole, getProcurementsForRole, formatLKR } from "../data";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TEC Dashboard — TEC Member (Technical Evaluation Committee)
@@ -21,17 +21,18 @@ interface TECDashboardProps {
 }
 
 export function TECDashboard({ user, activeTab, onTabChange, onViewProcurement, onViewProcurementDetails }: TECDashboardProps) {
-  if (activeTab === "evaluations")  return <EvaluationsPanel onViewProcurementDetails={onViewProcurementDetails} />;
-  if (activeTab === "procurements") return <AllProcurementsPanel onViewProcurement={onViewProcurement} />;
+  if (activeTab === "evaluations")  return <EvaluationsPanel onViewProcurementDetails={onViewProcurementDetails} user={user} />;
+  if (activeTab === "procurements") return <AllProcurementsPanel onViewProcurement={onViewProcurement} user={user} />;
   return <TECOverview user={user} onTabChange={onTabChange} />;
 }
 
 function TECOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k: string) => void }) {
-  const queue = getActionQueueForRole("TEC");
+  const queue = getActionQueueForRole(user);
+  const myProcurements = getProcurementsForRole(user);
   return (
     <div style={{ padding: "28px 32px" }}>
       <WelcomeBanner user={user} />
-      <StatCardRow total={MOCK_PROCUREMENTS.length} inQueue={queue.length} actionRequired={queue.length} completed={0} />
+      <StatCardRow total={myProcurements.length} inQueue={queue.length} actionRequired={queue.length} completed={0} />
       <ActionQueueList items={queue} onViewAll={() => onTabChange("evaluations")} onItemClick={() => onTabChange("evaluations")} />
       <div style={{ background: "#FFFFFF", border: "1px solid #E5E7EB", borderRadius: 10, padding: "18px 20px" }}>
         <h3 style={{ fontSize: 13, fontWeight: 700, color: "#F59E0B", margin: 0, marginBottom: 12 }}>TEC Responsibilities</h3>
@@ -45,10 +46,27 @@ function TECOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k
   );
 }
 
-function EvaluationsPanel({ onViewProcurementDetails }: { onViewProcurementDetails: (id: string) => void }) {
-  const items = MOCK_PROCUREMENTS.filter(p => p.status === "Technical Evaluation");
-  const [selected, setSelected] = useState(items[0] ?? null);
-  const [scores, setScores] = useState({ technical: "", financial: "", compliance: "" });
+function EvaluationsPanel({ onViewProcurementDetails, user }: { onViewProcurementDetails: (id: string) => void; user: UserContext }) {
+  const myProcurements = getProcurementsForRole(user);
+  const items = myProcurements.filter(p => p.status === "Technical Evaluation");
+  const handleSubmitReport = () => {
+    if (!selected) return;
+    selected.status = "Authority Approval";
+    selected.updatedAt = new Date().toISOString();
+    selected.activityLogs = [
+      {
+        id: `log-tec-${Date.now()}`,
+        stepIndex: 4,
+        actor: user.name,
+        role: "TEC Member",
+        action: `Technical Evaluation completed. Scores - Technical: ${scores.technical}, Financial: ${scores.financial}, Compliance: ${scores.compliance}. Bid Evaluation Sheet (BES) submitted.`,
+        timestamp: new Date().toISOString(),
+      },
+      ...(selected.activityLogs ?? []),
+    ];
+    setSelected(null);
+    setScores({ technical: "", financial: "", compliance: "" });
+  };
 
   return (
     <div style={{ padding: "28px 32px" }}>
@@ -116,6 +134,7 @@ function EvaluationsPanel({ onViewProcurementDetails }: { onViewProcurementDetai
               </div>
 
               <button
+                onClick={handleSubmitReport}
                 disabled={!scores.technical || !scores.financial || !scores.compliance}
                 style={{
                   marginTop: 20,
@@ -140,14 +159,15 @@ function EvaluationsPanel({ onViewProcurementDetails }: { onViewProcurementDetai
   );
 }
 
-function AllProcurementsPanel({ onViewProcurement }: { onViewProcurement: (id: string) => void }) {
+function AllProcurementsPanel({ onViewProcurement, user }: { onViewProcurement: (id: string) => void; user: UserContext }) {
+  const list = getProcurementsForRole(user);
   return (
     <div style={{ padding: "28px 32px" }}>
       <div style={{ marginBottom: 20 }}>
         <h1 style={{ fontSize: 18, fontWeight: 700, color: "#111827", margin: 0, marginBottom: 2 }}>All Procurements</h1>
-        <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>{MOCK_PROCUREMENTS.length} records visible for your role</p>
+        <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>{list.length} records visible for your role</p>
       </div>
-      <ProcurementTable procurements={MOCK_PROCUREMENTS} title="" subtitle="" onViewProcurement={onViewProcurement} />
+      <ProcurementTable procurements={list} title="" subtitle="" onViewProcurement={onViewProcurement} />
     </div>
   );
 }

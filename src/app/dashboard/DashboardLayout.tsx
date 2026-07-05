@@ -21,7 +21,8 @@ import { MOCK_PROCUREMENTS } from "./data";
 
 const DEMO_USERS: Record<Role, UserContext> = {
   HOD: { role: "HOD", name: "Dr. Nimal Perera",          title: "Head of Department",      faculty: "Faculty of Applied Sciences", department: "Computer Science",  avatarInitials: "NP" },
-  BUR: { role: "BUR", name: "Mr. Kamal Silva",            title: "Bursar",                  faculty: undefined,                     department: undefined,           avatarInitials: "KS" },
+  BUR: { role: "BUR", name: "Mr. Kamal Silva",            title: "Bursar (Main)",           faculty: undefined,                     department: undefined,           avatarInitials: "KS" },
+  FBUR: { role: "FBUR", name: "Mrs. Indrani Perera",     title: "Faculty Bursar",          faculty: "Faculty of Applied Sciences", department: undefined,           avatarInitials: "IP" },
   SDC: { role: "SDC", name: "Ms. Dilhani Jayasena",       title: "Supplies Division Clerk", faculty: undefined,                     department: "Supplies Division", avatarInitials: "DJ" },
   TEC: { role: "TEC", name: "Dr. Ruwan Fernando",         title: "TEC Member",              faculty: "Faculty of Engineering",      department: undefined,           avatarInitials: "RF" },
   TB:  { role: "TB",  name: "Prof. Anura Wickramasinghe", title: "Tender Board Member",     faculty: undefined,                     department: undefined,           avatarInitials: "AW" },
@@ -135,7 +136,7 @@ export function DashboardLayout({ role, onLogout }: DashboardLayoutProps) {
                 setSelectedProcurementId(null);
                 // Return to corresponding role action tab
                 if (role === "HOD") setActiveKey("quality-report");
-                else if (role === "BUR") setActiveKey("fund-verification");
+                else if (role === "BUR" || role === "FBUR") setActiveKey("fund-verification");
                 else if (role === "SDC") setActiveKey("method");
                 else if (role === "TEC") setActiveKey("evaluations");
                 else if (role === "TB") setActiveKey("approvals");
@@ -150,7 +151,7 @@ export function DashboardLayout({ role, onLogout }: DashboardLayoutProps) {
           {activeKey !== "status-tracker" && activeKey !== "procurement-details" && role === "HOD" && (
             <HODDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} onViewProcurementDetails={handleViewProcurementDetails} />
           )}
-          {activeKey !== "status-tracker" && activeKey !== "procurement-details" && role === "BUR" && (
+          {activeKey !== "status-tracker" && activeKey !== "procurement-details" && (role === "BUR" || role === "FBUR") && (
             <BursarDashboard user={user} activeTab={activeKey} onTabChange={setActiveKey} onViewProcurement={handleViewProcurement} onViewProcurementDetails={handleViewProcurementDetails} />
           )}
           {activeKey !== "status-tracker" && activeKey !== "procurement-details" && role === "SDC" && (

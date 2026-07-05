@@ -7,7 +7,7 @@ import { PageTitleBar } from "../components/ContentHeader";
 import { ActionQueueList } from "../components/ActionQueueList";
 import { ProcurementTable } from "../components/ProcurementTable";
 import { StatusBadge } from "../components/StatusBadge";
-import { MOCK_PROCUREMENTS, getActionQueueForRole, formatLKR } from "../data";
+import { MOCK_PROCUREMENTS, getActionQueueForRole, getProcurementsForRole, formatLKR } from "../data";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // HOD Dashboard — Head of Department
@@ -23,16 +23,16 @@ interface HODDashboardProps {
 
 export function HODDashboard({ user, activeTab, onTabChange, onViewProcurement, onViewProcurementDetails }: HODDashboardProps) {
   if (activeTab === "new-requisition") return <NewRequisitionPanel onSubmit={() => onTabChange("dashboard")} onViewProcurement={onViewProcurement} user={user} />;
-  if (activeTab === "procurements")    return <AllProcurementsPanel onViewProcurement={onViewProcurement} />;
-  if (activeTab === "quality-report")  return <QualityReportPanel onViewProcurementDetails={onViewProcurementDetails} />;
+  if (activeTab === "procurements")    return <AllProcurementsPanel onViewProcurement={onViewProcurement} user={user} />;
+  if (activeTab === "quality-report")  return <QualityReportPanel onViewProcurementDetails={onViewProcurementDetails} user={user} />;
   return <HODOverview user={user} onTabChange={onTabChange} />;
 }
 
 
 
-// ── HOD Overview ─────────────────────────────────────────────────────────────
 function HODOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k: string) => void }) {
-  const queue = getActionQueueForRole("HOD");
+  const queue = getActionQueueForRole(user);
+  const myProcurements = getProcurementsForRole(user);
   const [search, setSearch] = useState("");
 
   return (
@@ -42,8 +42,8 @@ function HODOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k
 
       {/* 4 Stat Cards */}
       <StatCardRow
-        total={MOCK_PROCUREMENTS.length}
-        inQueue={3}
+        total={myProcurements.length}
+        inQueue={queue.length}
         actionRequired={queue.length}
         completed={0}
       />
@@ -142,7 +142,7 @@ function HODOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k
               </tr>
             </thead>
             <tbody>
-              {MOCK_PROCUREMENTS.filter(pr => {
+              {myProcurements.filter(pr => {
                 const q = search.toLowerCase();
                 return !q ||
                   pr.title.toLowerCase().includes(q) ||
@@ -919,27 +919,50 @@ const mInput = (hasError: boolean): React.CSSProperties => ({
   transition: "border-color 0.2s",
 });
 
-function AllProcurementsPanel({ onViewProcurement }: { onViewProcurement: (id: string) => void }) {
+function AllProcurementsPanel({ onViewProcurement, user }: { onViewProcurement: (id: string) => void; user: UserContext }) {
+  const list = getProcurementsForRole(user);
   return (
     <div style={{ padding: "28px 28px" }}>
-      <PageTitleBar title="All Procurements" subtitle={`${MOCK_PROCUREMENTS.length} records visible for your role`} />
+      <PageTitleBar title="All Procurements" subtitle={`${list.length} records visible for your role`} />
       <div style={{ background: "#FFFFFF", borderRadius: 14, border: "1px solid #F1F5F9", overflow: "hidden" }}>
-        <ProcurementTable procurements={MOCK_PROCUREMENTS} title="" subtitle="" onViewProcurement={onViewProcurement} />
+        <ProcurementTable procurements={list} title="" subtitle="" onViewProcurement={onViewProcurement} />
       </div>
     </div>
   );
 }
 
-function QualityReportPanel({ onViewProcurementDetails }: { onViewProcurementDetails: (id: string) => void }) {
-  const needsReport = MOCK_PROCUREMENTS.filter(p => p.status === "Quality Report Required");
+function QualityReportPanel({ onViewProcurementDetails, user }: { onViewProcurementDetails: (id: string) => void; user: UserContext }) {
+  const list = getProcurementsForRole(user);
+  const needsReport = list.filter(p => p.status === "Quality Report Required");
+  const [submittedReports, setSubmittedReports] = useState<Set<string>>(new Set());
+
+  const handleSubmitReport = (pr: any) => {
+    pr.status = "Payment Pending";
+    pr.updatedAt = new Date().toISOString();
+    pr.activityLogs = [
+      {
+        id: `log-hod-qr-${Date.now()}`,
+        stepIndex: 8,
+        actor: user.name,
+        role: "Head of Department",
+        action: `Quality inspection completed. Goods meet requested specifications. Quality Report approved and forwarded to Finance.`,
+        timestamp: new Date().toISOString(),
+      },
+      ...(pr.activityLogs ?? []),
+    ];
+    setSubmittedReports(p => new Set([...p, pr.id]));
+  };
+
+  const pendingReports = needsReport.filter(p => !submittedReports.has(p.id));
+
   return (
     <div style={{ padding: "28px 28px" }}>
       <PageTitleBar title="Quality Reports" subtitle="Submit inspection reports for delivered goods" />
-      {needsReport.length === 0 ? (
+      {pendingReports.length === 0 ? (
         <div style={{ background: "#FFFFFF", borderRadius: 14, padding: "48px", textAlign: "center", color: "#9CA3AF", border: "1px solid #F1F5F9" }}>No quality reports pending</div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          {needsReport.map(pr => (
+          {pendingReports.map(pr => (
             <div key={pr.id} style={{ background: "#FFFFFF", border: "1px solid #F1F5F9", borderRadius: 14, padding: "20px 24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
                 <span style={{ fontSize: 12, fontWeight: 700, color: "#2563EB", fontFamily: "monospace" }}>{pr.id}</span>
@@ -961,7 +984,7 @@ function QualityReportPanel({ onViewProcurementDetails }: { onViewProcurementDet
                   View Details
                 </button>
               </div>
-              <button style={{ padding: "9px 20px", background: "#7A0C0C", color: "#FFFFFF", border: "none", borderRadius: 9, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>Submit Report</button>
+              <button onClick={() => handleSubmitReport(pr)} style={{ padding: "9px 20px", background: "#7A0C0C", color: "#FFFFFF", border: "none", borderRadius: 9, fontSize: 13, fontWeight: 700, cursor: "pointer" }}>Submit Report</button>
             </div>
           ))}
         </div>

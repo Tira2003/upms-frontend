@@ -64,7 +64,7 @@ export default function App() {
 // RolePicker — demo role selection screen matching the demo site
 // ─────────────────────────────────────────────────────────────────────────────
 
-const ROLES: Role[] = ["HOD", "BUR", "SDC", "TEC", "TB", "STK", "SUP", "FIN"];
+const ROLES: Role[] = ["HOD", "BUR", "FBUR", "SDC", "TEC", "TB", "STK", "SUP", "FIN"];
 
 function RolePicker({ onSelect }: { onSelect: (r: Role) => void }) {
   const [hovered, setHovered] = useState<Role | null>(null);

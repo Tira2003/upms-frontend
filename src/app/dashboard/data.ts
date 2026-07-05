@@ -1,4 +1,4 @@
-import type { Procurement, ProcurementStatus } from "./types";
+import type { Procurement, ProcurementStatus, UserContext } from "./types";
 import { WORKFLOW_STEPS } from "./types";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -299,23 +299,45 @@ export function formatLKR(value: number): string {
   return `LKR ${value.toLocaleString("en-LK")}`;
 }
 
-/** Filter procurements visible to a given role */
-export function getProcurementsForRole(role: string): Procurement[] {
-  // In a real system this would be server-side filtered.
-  // For the demo all roles see all procurements except SUP (suppliers see bidding-open only).
+/** Filter procurements visible to a given role/user */
+export function getProcurementsForRole(user: UserContext): Procurement[] {
+  const { role, faculty, department } = user;
+
+  if (role === "HOD") {
+    // HOD only sees procurements submitted from their department & faculty
+    return MOCK_PROCUREMENTS.filter(p =>
+      p.faculty === faculty && p.department === department
+    );
+  }
+
+  if (role === "BUR" || role === "FBUR") {
+    // If faculty is specified on the user, they are a Faculty Bursar
+    // Otherwise they are the Main Bursar and see everything
+    if (faculty) {
+      return MOCK_PROCUREMENTS.filter(p => p.faculty === faculty);
+    }
+    return MOCK_PROCUREMENTS;
+  }
+
   if (role === "SUP") {
     return MOCK_PROCUREMENTS.filter(p =>
       p.status === "Bidding Open" || p.status === "Technical Evaluation"
     );
   }
+
+  // Others (FIN, SDC, TEC, TB, STK) see all
   return MOCK_PROCUREMENTS;
 }
 
-/** Get procurements that require action for a given role */
-export function getActionQueueForRole(role: string): Procurement[] {
+/** Get procurements that require action for a given role/user */
+export function getActionQueueForRole(user: UserContext): Procurement[] {
+  const { role } = user;
+  const filtered = getProcurementsForRole(user);
+
   const map: Record<string, ProcurementStatus[]> = {
     HOD: ["Quality Report Required"],
     BUR: ["Pending Fund Verification"],
+    FBUR: ["Pending Fund Verification"],
     SDC: ["Funds Verified"],
     TEC: ["Technical Evaluation"],
     TB:  ["Technical Evaluation"],
@@ -324,7 +346,7 @@ export function getActionQueueForRole(role: string): Procurement[] {
     FIN: ["Payment Pending"],
   };
   const statuses = map[role] ?? [];
-  return MOCK_PROCUREMENTS.filter(p => statuses.includes(p.status));
+  return filtered.filter(p => statuses.includes(p.status));
 }
 
 /**

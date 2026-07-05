@@ -4,7 +4,7 @@ import { WelcomeBanner } from "../components/WelcomeBanner";
 import { StatCardRow } from "../components/StatCard";
 import { ActionQueueList } from "../components/ActionQueueList";
 import { ProcurementTable } from "../components/ProcurementTable";
-import { MOCK_PROCUREMENTS, getActionQueueForRole, formatLKR } from "../data";
+import { MOCK_PROCUREMENTS, getActionQueueForRole, getProcurementsForRole, formatLKR } from "../data";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Storekeeper Dashboard — GRN Generation
@@ -20,29 +20,49 @@ interface StorekeeperDashboardProps {
 }
 
 export function StorekeeperDashboard({ user, activeTab, onTabChange, onViewProcurement, onViewProcurementDetails }: StorekeeperDashboardProps) {
-  if (activeTab === "grn")          return <GRNPanel onViewProcurementDetails={onViewProcurementDetails} />;
-  if (activeTab === "procurements") return <AllProcurementsPanel onViewProcurement={onViewProcurement} />;
+  if (activeTab === "grn")          return <GRNPanel onViewProcurementDetails={onViewProcurementDetails} user={user} />;
+  if (activeTab === "procurements") return <AllProcurementsPanel onViewProcurement={onViewProcurement} user={user} />;
   return <STKOverview user={user} onTabChange={onTabChange} />;
 }
 
 function STKOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k: string) => void }) {
-  const queue = getActionQueueForRole("STK");
+  const queue = getActionQueueForRole(user);
+  const myProcurements = getProcurementsForRole(user);
   return (
     <div style={{ padding: "28px 32px" }}>
       <WelcomeBanner user={user} />
-      <StatCardRow total={MOCK_PROCUREMENTS.length} inQueue={queue.length} actionRequired={queue.length} completed={2} />
+      <StatCardRow total={myProcurements.length} inQueue={queue.length} actionRequired={queue.length} completed={2} />
       <ActionQueueList items={queue} onViewAll={() => onTabChange("grn")} onItemClick={() => onTabChange("grn")} />
     </div>
   );
 }
 
-function GRNPanel({ onViewProcurementDetails }: { onViewProcurementDetails: (id: string) => void }) {
-  const deliveries = MOCK_PROCUREMENTS.filter(p => p.status === "Awaiting Delivery");
+function GRNPanel({ onViewProcurementDetails, user }: { onViewProcurementDetails: (id: string) => void; user: UserContext }) {
+  const myProcurements = getProcurementsForRole(user);
+  const deliveries = myProcurements.filter(p => p.status === "Awaiting Delivery");
   const [issued, setIssued] = useState<Set<string>>(new Set());
   const [grns, setGrns] = useState<Record<string, { qty: string; condition: string; note: string }>>({});
   const [form, setForm] = useState<Record<string, { qty: string; condition: string; note: string }>>({});
 
   const handleIssue = (id: string) => {
+    const pr = MOCK_PROCUREMENTS.find(p => p.id === id);
+    if (pr) {
+      const f = form[id] ?? { qty: "", condition: "Good", note: "" };
+      pr.status = "Quality Report Required";
+      pr.grnNumber = `GRN-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+      pr.updatedAt = new Date().toISOString();
+      pr.activityLogs = [
+        {
+          id: `log-stk-${Date.now()}`,
+          stepIndex: 7,
+          actor: user.name ?? "Saman Rathnayake",
+          role: "Storekeeper",
+          action: `Goods received and inspected. Qty: ${f.qty}, Condition: ${f.condition}. ${f.note ? "Notes: " + f.note : ""}. GRN ${pr.grnNumber} issued.`,
+          timestamp: new Date().toISOString(),
+        },
+        ...(pr.activityLogs ?? []),
+      ];
+    }
     setIssued(p => new Set([...p, id]));
     setGrns(p => ({ ...p, [id]: form[id] ?? { qty: "", condition: "Good", note: "" } }));
   };
@@ -134,14 +154,15 @@ function GRNPanel({ onViewProcurementDetails }: { onViewProcurementDetails: (id:
   );
 }
 
-function AllProcurementsPanel({ onViewProcurement }: { onViewProcurement: (id: string) => void }) {
+function AllProcurementsPanel({ onViewProcurement, user }: { onViewProcurement: (id: string) => void; user: UserContext }) {
+  const list = getProcurementsForRole(user);
   return (
     <div style={{ padding: "28px 32px" }}>
       <div style={{ marginBottom: 20 }}>
         <h1 style={{ fontSize: 18, fontWeight: 700, color: "#111827", margin: 0, marginBottom: 2 }}>All Procurements</h1>
-        <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>{MOCK_PROCUREMENTS.length} records</p>
+        <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>{list.length} records</p>
       </div>
-      <ProcurementTable procurements={MOCK_PROCUREMENTS} title="" subtitle="" onViewProcurement={onViewProcurement} />
+      <ProcurementTable procurements={list} title="" subtitle="" onViewProcurement={onViewProcurement} />
     </div>
   );
 }

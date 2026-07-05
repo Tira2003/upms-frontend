@@ -2,10 +2,11 @@
 // UPMS Dashboard — Shared Type Definitions
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** The 8 roles in the procurement system */
+/** The 9 roles in the procurement system */
 export type Role =
   | "HOD"   // Head of Department
-  | "BUR"   // Bursar
+  | "BUR"   // Bursar (Main)
+  | "FBUR"  // Faculty Bursar
   | "SDC"   // Supplies Division Clerk
   | "TEC"   // TEC Member
   | "TB"    // Tender Board Member
@@ -16,7 +17,8 @@ export type Role =
 /** Human-readable role metadata */
 export const ROLE_META: Record<Role, { label: string; description: string }> = {
   HOD: { label: "Head of Department",    description: "Create requisitions, approve <500k, submit quality reports" },
-  BUR: { label: "Bursar",                description: "Verify fund availability before procurement proceeds" },
+  BUR: { label: "Bursar (Main)",         description: "Verify fund availability centrally across all faculties" },
+  FBUR: { label: "Faculty Bursar",       description: "Verify fund availability for requisitions from their faculty" },
   SDC: { label: "Supplies Division Clerk", description: "Select method, manage suppliers, coordinate bid opening" },
   TEC: { label: "TEC Member",            description: "Preliminary, technical & financial evaluation (>500k)" },
   TB:  { label: "Tender Board Member",   description: "Approve BES reports and authorise purchase orders" },
@@ -39,6 +41,11 @@ export const ROLE_NAV_TABS: Record<Role, NavTab[]> = {
     { key: "procurements",    label: "All Procurements" },
   ],
   BUR: [
+    { key: "dashboard",        label: "Dashboard" },
+    { key: "fund-verification", label: "Fund Verification" },
+    { key: "procurements",     label: "All Procurements" },
+  ],
+  FBUR: [
     { key: "dashboard",        label: "Dashboard" },
     { key: "fund-verification", label: "Fund Verification" },
     { key: "procurements",     label: "All Procurements" },

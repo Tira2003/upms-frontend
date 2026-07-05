@@ -6,7 +6,7 @@ import { ActionQueueList } from "../components/ActionQueueList";
 import { ProcurementTable } from "../components/ProcurementTable";
 import { EmptyState } from "../components/EmptyState";
 import { StatusBadge } from "../components/StatusBadge";
-import { MOCK_PROCUREMENTS, getActionQueueForRole, formatLKR } from "../data";
+import { MOCK_PROCUREMENTS, getActionQueueForRole, getProcurementsForRole, formatLKR } from "../data";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Tender Board Dashboard
@@ -22,17 +22,18 @@ interface TBDashboardProps {
 }
 
 export function TBDashboard({ user, activeTab, onTabChange, onViewProcurement, onViewProcurementDetails }: TBDashboardProps) {
-  if (activeTab === "approvals")    return <ApprovalsPanel onViewProcurementDetails={onViewProcurementDetails} />;
-  if (activeTab === "procurements") return <AllProcurementsPanel onViewProcurement={onViewProcurement} />;
+  if (activeTab === "approvals")    return <ApprovalsPanel onViewProcurementDetails={onViewProcurementDetails} user={user} />;
+  if (activeTab === "procurements") return <AllProcurementsPanel onViewProcurement={onViewProcurement} user={user} />;
   return <TBOverview user={user} onTabChange={onTabChange} />;
 }
 
 function TBOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k: string) => void }) {
-  const queue = getActionQueueForRole("TB");
+  const queue = getActionQueueForRole(user);
+  const myProcurements = getProcurementsForRole(user);
   return (
     <div style={{ padding: "28px 32px" }}>
       <WelcomeBanner user={user} />
-      <StatCardRow total={MOCK_PROCUREMENTS.length} inQueue={queue.length} actionRequired={queue.length} completed={2} />
+      <StatCardRow total={myProcurements.length} inQueue={queue.length} actionRequired={queue.length} completed={2} />
       <ActionQueueList items={queue} onViewAll={() => onTabChange("approvals")} onItemClick={() => onTabChange("approvals")} />
       <div style={{ background: "#FFFFFF", border: "1px solid #E5E7EB", borderRadius: 10, padding: "18px 20px" }}>
         <h3 style={{ fontSize: 13, fontWeight: 700, color: "#F59E0B", margin: 0, marginBottom: 12 }}>Tender Board Responsibilities</h3>
@@ -46,11 +47,35 @@ function TBOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k:
   );
 }
 
-function ApprovalsPanel({ onViewProcurementDetails }: { onViewProcurementDetails: (id: string) => void }) {
-  const items = MOCK_PROCUREMENTS.filter(p => p.status === "Technical Evaluation");
+function ApprovalsPanel({ onViewProcurementDetails, user }: { onViewProcurementDetails: (id: string) => void; user: UserContext }) {
+  const myProcurements = getProcurementsForRole(user);
+  const items = myProcurements.filter(p => p.status === "Technical Evaluation");
   const [decisions, setDecisions] = useState<Record<string, "approved" | "rejected">>({});
 
   const decide = (id: string, verdict: "approved" | "rejected") => {
+    const pr = MOCK_PROCUREMENTS.find(p => p.id === id);
+    if (pr) {
+      if (verdict === "approved") {
+        pr.status = "Purchase Order Issued";
+        pr.poNumber = `PO-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+      } else {
+        pr.status = "Rejected";
+      }
+      pr.updatedAt = new Date().toISOString();
+      pr.activityLogs = [
+        {
+          id: `log-tb-${Date.now()}`,
+          stepIndex: 5,
+          actor: user.name,
+          role: "Tender Board",
+          action: verdict === "approved"
+            ? `Tender Board approved the BES recommendation. Purchase Order ${pr.poNumber} generated and issued to supplier.`
+            : `Tender Board rejected the BES recommendation. Procurement canceled.`,
+          timestamp: new Date().toISOString(),
+        },
+        ...(pr.activityLogs ?? []),
+      ];
+    }
     setDecisions(p => ({ ...p, [id]: verdict }));
   };
 
@@ -130,14 +155,15 @@ function ApprovalsPanel({ onViewProcurementDetails }: { onViewProcurementDetails
   );
 }
 
-function AllProcurementsPanel({ onViewProcurement }: { onViewProcurement: (id: string) => void }) {
+function AllProcurementsPanel({ onViewProcurement, user }: { onViewProcurement: (id: string) => void; user: UserContext }) {
+  const list = getProcurementsForRole(user);
   return (
     <div style={{ padding: "28px 32px" }}>
       <div style={{ marginBottom: 20 }}>
         <h1 style={{ fontSize: 18, fontWeight: 700, color: "#111827", margin: 0, marginBottom: 2 }}>All Procurements</h1>
-        <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>{MOCK_PROCUREMENTS.length} records</p>
+        <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>{list.length} records</p>
       </div>
-      <ProcurementTable procurements={MOCK_PROCUREMENTS} title="" subtitle="" onViewProcurement={onViewProcurement} />
+      <ProcurementTable procurements={list} title="" subtitle="" onViewProcurement={onViewProcurement} />
     </div>
   );
 }

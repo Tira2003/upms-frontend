@@ -4,7 +4,7 @@ import { WelcomeBanner } from "../components/WelcomeBanner";
 import { StatCardRow } from "../components/StatCard";
 import { ActionQueueList } from "../components/ActionQueueList";
 import { ProcurementTable } from "../components/ProcurementTable";
-import { MOCK_PROCUREMENTS, getActionQueueForRole, formatLKR } from "../data";
+import { MOCK_PROCUREMENTS, getActionQueueForRole, getProcurementsForRole, formatLKR } from "../data";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Finance Division Dashboard — Payment Processing
@@ -20,19 +20,20 @@ interface FinanceDashboardProps {
 }
 
 export function FinanceDashboard({ user, activeTab, onTabChange, onViewProcurement, onViewProcurementDetails }: FinanceDashboardProps) {
-  if (activeTab === "payments")     return <PaymentsPanel onViewProcurementDetails={onViewProcurementDetails} />;
-  if (activeTab === "procurements") return <AllProcurementsPanel onViewProcurement={onViewProcurement} />;
+  if (activeTab === "payments")     return <PaymentsPanel onViewProcurementDetails={onViewProcurementDetails} user={user} />;
+  if (activeTab === "procurements") return <AllProcurementsPanel onViewProcurement={onViewProcurement} user={user} />;
   return <FinanceOverview user={user} onTabChange={onTabChange} />;
 }
 
 function FinanceOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k: string) => void }) {
-  const queue = getActionQueueForRole("FIN");
+  const queue = getActionQueueForRole(user);
+  const myProcurements = getProcurementsForRole(user);
   const totalPending = queue.reduce((sum, pr) => sum + pr.value, 0);
 
   return (
     <div style={{ padding: "28px 32px" }}>
       <WelcomeBanner user={user} />
-      <StatCardRow total={MOCK_PROCUREMENTS.length} inQueue={queue.length} actionRequired={queue.length} completed={2} />
+      <StatCardRow total={myProcurements.length} inQueue={queue.length} actionRequired={queue.length} completed={2} />
 
       {/* Total pending amount */}
       {queue.length > 0 && (
@@ -47,13 +48,30 @@ function FinanceOverview({ user, onTabChange }: { user: UserContext; onTabChange
   );
 }
 
-function PaymentsPanel({ onViewProcurementDetails }: { onViewProcurementDetails: (id: string) => void }) {
-  const pending = MOCK_PROCUREMENTS.filter(p => p.status === "Payment Pending");
+function PaymentsPanel({ onViewProcurementDetails, user }: { onViewProcurementDetails: (id: string) => void; user: UserContext }) {
+  const myProcurements = getProcurementsForRole(user);
+  const pending = myProcurements.filter(p => p.status === "Payment Pending");
   const [processed, setProcessed] = useState<Set<string>>(new Set());
   const [voucherNos, setVoucherNos] = useState<Record<string, string>>({});
 
   const handleProcess = (id: string) => {
     if (!voucherNos[id]) return;
+    const pr = MOCK_PROCUREMENTS.find(p => p.id === id);
+    if (pr) {
+      pr.status = "Completed";
+      pr.updatedAt = new Date().toISOString();
+      pr.activityLogs = [
+        {
+          id: `log-fin-${Date.now()}`,
+          stepIndex: 9,
+          actor: user.name,
+          role: "Finance Division",
+          action: `Payment processed and dispatched. Voucher: ${voucherNos[id]} issued. Requisition completed.`,
+          timestamp: new Date().toISOString(),
+        },
+        ...(pr.activityLogs ?? []),
+      ];
+    }
     setProcessed(p => new Set([...p, id]));
   };
 
@@ -142,14 +160,15 @@ function PaymentsPanel({ onViewProcurementDetails }: { onViewProcurementDetails:
   );
 }
 
-function AllProcurementsPanel({ onViewProcurement }: { onViewProcurement: (id: string) => void }) {
+function AllProcurementsPanel({ onViewProcurement, user }: { onViewProcurement: (id: string) => void; user: UserContext }) {
+  const list = getProcurementsForRole(user);
   return (
     <div style={{ padding: "28px 32px" }}>
       <div style={{ marginBottom: 20 }}>
         <h1 style={{ fontSize: 18, fontWeight: 700, color: "#111827", margin: 0, marginBottom: 2 }}>All Procurements</h1>
-        <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>{MOCK_PROCUREMENTS.length} records</p>
+        <p style={{ fontSize: 13, color: "#9CA3AF", margin: 0 }}>{list.length} records</p>
       </div>
-      <ProcurementTable procurements={MOCK_PROCUREMENTS} title="" subtitle="" onViewProcurement={onViewProcurement} />
+      <ProcurementTable procurements={list} title="" subtitle="" onViewProcurement={onViewProcurement} />
     </div>
   );
 }

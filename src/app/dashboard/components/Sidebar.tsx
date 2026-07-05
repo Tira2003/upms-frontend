@@ -53,6 +53,16 @@ const ROLE_NAV: Record<Role, NavSection[]> = {
       ],
     },
   ],
+  FBUR: [
+    {
+      title: "MAIN MENU",
+      items: [
+        { key: "dashboard",         label: "Dashboard",           icon: LayoutDashboard },
+        { key: "fund-verification", label: "Fund Verification",   icon: BadgeCheck, badge: 1 },
+        { key: "procurements",      label: "All Procurements",    icon: ClipboardList },
+      ],
+    },
+  ],
   SDC: [
     {
       title: "MAIN MENU",
