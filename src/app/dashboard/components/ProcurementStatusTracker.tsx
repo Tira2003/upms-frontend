@@ -139,7 +139,7 @@ function StepProgressBar({
   isCompleted: boolean;
   isRejected: boolean;
 }) {
-  const [tooltip, setTooltip] = useState<number | null>(null);
+
 
   return (
     <div
@@ -165,8 +165,8 @@ function StepProgressBar({
           <span style={{
             display: "inline-flex", alignItems: "center", gap: 5,
             fontSize: 11, fontWeight: 700, padding: "4px 12px",
-            borderRadius: 20, background: "#F0FDF4", color: "#15803D",
-            border: "1px solid #BBF7D0",
+            borderRadius: 20, background: "#FEF0F0", color: "#7A0C0C",
+            border: "1px solid #F5C6C6",
           }}>
             <CheckCircle2 size={12} /> Completed
           </span>
@@ -188,38 +188,8 @@ function StepProgressBar({
             >
               {/* Step node */}
               <div
-                style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5, position: "relative", cursor: "pointer" }}
-                onMouseEnter={() => setTooltip(i)}
-                onMouseLeave={() => setTooltip(null)}
+                style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5, position: "relative" }}
               >
-                {/* Tooltip */}
-                {tooltip === i && (
-                  <div style={{
-                    position: "absolute",
-                    bottom: "calc(100% + 8px)",
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    background: "#1E293B",
-                    color: "#FFFFFF",
-                    fontSize: 11,
-                    fontWeight: 600,
-                    padding: "6px 10px",
-                    borderRadius: 8,
-                    whiteSpace: "nowrap",
-                    zIndex: 50,
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                    pointerEvents: "none",
-                  }}>
-                    {step.label}
-                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.6)", marginTop: 2 }}>{step.roleLabel}</div>
-                    {/* Arrow */}
-                    <div style={{
-                      position: "absolute", top: "100%", left: "50%", transform: "translateX(-50%)",
-                      borderLeft: "5px solid transparent", borderRight: "5px solid transparent",
-                      borderTop: "5px solid #1E293B",
-                    }} />
-                  </div>
-                )}
 
                 {/* Circle */}
                 <div style={{
@@ -227,21 +197,21 @@ function StepProgressBar({
                   height: 36,
                   borderRadius: "50%",
                   background: done
-                    ? "linear-gradient(135deg, #15803D, #16A34A)"
-                    : active
                     ? "linear-gradient(135deg, #7A0C0C, #9B1515)"
+                    : active
+                    ? "linear-gradient(135deg, #C2410C, #EA580C)"
                     : "#F3F4F6",
                   border: active
-                    ? "2.5px solid #7A0C0C"
+                    ? "2.5px solid #C2410C"
                     : done
-                    ? "2.5px solid #15803D"
+                    ? "2.5px solid #7A0C0C"
                     : "2px solid #D1D5DB",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   flexShrink: 0,
                   transition: "all 0.25s ease",
-                  boxShadow: active ? "0 0 0 4px rgba(122,12,12,0.12)" : "none",
+                  boxShadow: active ? "0 0 0 4px rgba(194,65,12,0.15)" : "none",
                 }}>
                   {done ? (
                     <CheckCircle2 size={16} color="#FFFFFF" strokeWidth={2.5} />
@@ -254,7 +224,7 @@ function StepProgressBar({
                 <span style={{
                   fontSize: 10,
                   fontWeight: active ? 700 : done ? 600 : 500,
-                  color: active ? "#7A0C0C" : done ? "#15803D" : "#9CA3AF",
+                  color: active ? "#C2410C" : done ? "#7A0C0C" : "#9CA3AF",
                   textAlign: "center",
                   maxWidth: 52,
                   lineHeight: 1.3,
@@ -270,9 +240,9 @@ function StepProgressBar({
                   height: 3,
                   marginBottom: 18,
                   background: done
-                    ? "linear-gradient(to right, #15803D, #22C55E)"
+                    ? "linear-gradient(to right, #7A0C0C, #9B1515)"
                     : active
-                    ? "linear-gradient(to right, #7A0C0C40, #D1D5DB)"
+                    ? "linear-gradient(to right, #C2410C40, #D1D5DB)"
                     : "#E5E7EB",
                   borderRadius: 2,
                   transition: "background 0.3s ease",
@@ -306,7 +276,7 @@ function CurrentStageCard({
   if (isCompleted) {
     return (
       <div style={{
-        background: "linear-gradient(135deg, #14532D 0%, #15803D 100%)",
+        background: "linear-gradient(135deg, #7a530cff 0%, #a37717ff 100%)",
         borderRadius: 14,
         padding: "24px",
         marginBottom: 24,
@@ -341,16 +311,9 @@ function CurrentStageCard({
 
   if (!step) return null;
 
-  const roleColors: Record<string, string> = {
-    HOD: "#7A0C0C", BUR: "#1D4ED8", SDC: "#6D28D9",
-    TEC: "#0369A1", TB: "#B45309", STK: "#15803D",
-    SUP: "#1D4ED8", FIN: "#0F766E",
-  };
-  const color = roleColors[step.role] ?? "#374151";
-
   return (
     <div style={{
-      background: `linear-gradient(135deg, ${color} 0%, ${color}DD 100%)`,
+      background: "linear-gradient(135deg, #7a530cff 0%, #a37717ff 100%)",
       borderRadius: 14,
       padding: "22px 24px",
       marginBottom: 24,

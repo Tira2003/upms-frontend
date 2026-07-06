@@ -188,7 +188,7 @@ export function ProcurementTable({
                         (e.currentTarget as HTMLElement).style.borderColor = "#E5E7EB";
                       }}
                     >
-                      View Status →
+                      View Status
                     </button>
                   )}
                 </td>

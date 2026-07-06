@@ -92,7 +92,7 @@ function HODOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k
         >
           <div>
             <h3 style={{ fontSize: 14, fontWeight: 700, color: "#111827", margin: 0 }}>Recent Activities</h3>
-            <p style={{ fontSize: 11, color: "#9CA3AF", margin: "3px 0 0" }}>Latest procurement requests</p>
+            <p style={{ fontSize: 11, color: "#9CA3AF", margin: "3px 0 0" }}></p>
           </div>
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
             {/* Search */}
