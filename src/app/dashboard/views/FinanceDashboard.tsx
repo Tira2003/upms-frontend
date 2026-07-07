@@ -6,10 +6,6 @@ import { ActionQueueList } from "../components/ActionQueueList";
 import { ProcurementTable } from "../components/ProcurementTable";
 import { MOCK_PROCUREMENTS, getActionQueueForRole, getProcurementsForRole, formatLKR } from "../data";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Finance Division Dashboard — Payment Processing
-// Tabs: Dashboard · Payments · All Procurements
-// ─────────────────────────────────────────────────────────────────────────────
 
 interface FinanceDashboardProps {
   user: UserContext;
@@ -30,7 +26,6 @@ function FinanceOverview({ user, onTabChange }: { user: UserContext; onTabChange
   const myProcurements = getProcurementsForRole(user);
   const totalPending = queue.reduce((sum, pr) => sum + pr.value, 0);
 
-  // ── Budget figures (mock annual budget for demonstration) ──
   const ANNUAL_BUDGET = 85_000_000; // LKR 85 Million
   const spent = myProcurements
     .filter(p => p.status === "Completed")
@@ -46,7 +41,6 @@ function FinanceOverview({ user, onTabChange }: { user: UserContext; onTabChange
     <div style={{ padding: "28px 32px" }}>
       <WelcomeBanner user={user} />
 
-      {/* ── Annual Budget Card ── */}
       <div style={{
         background: "linear-gradient(135deg, #7a530cff 0%, #a37717ff 100%)",
         borderRadius: 16,

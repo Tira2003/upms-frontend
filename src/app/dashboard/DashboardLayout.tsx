@@ -15,10 +15,6 @@ import { ProcurementStatusTracker } from "./components/ProcurementStatusTracker"
 import { ProcurementDetails } from "./components/ProcurementDetails";
 import { MOCK_PROCUREMENTS } from "./data";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// DashboardLayout — sidebar + main content shell
-// Layout: [Fixed Left Sidebar 248px] | [Right: sticky header + scrollable content]
-// ─────────────────────────────────────────────────────────────────────────────
 
 const DEMO_USERS: Record<Role, UserContext> = {
   HOD:  { role: "HOD",  name: "Dr. Nimal Perera",          title: "Head of Department",      faculty: "Faculty of Applied Sciences", department: "Computer Science",  avatarInitials: "NP" },
@@ -68,6 +64,11 @@ export function DashboardLayout({ role, onLogout }: DashboardLayoutProps) {
   const subId      = parts[1] ?? null;           // e.g. procurement ID
 
   // Derive activeKey for rendering
+  // URL patterns:
+  //   /dashboard/:role                     → dashboard overview
+  //   /dashboard/:role/tab/:tabKey         → a named tab (procurements, payments…)
+  //   /dashboard/:role/tracker/:id         → procurement status tracker
+  //   /dashboard/:role/details/:id         → procurement details sheet
   let activeKey: string;
   let selectedProcurementId: string | null = null;
 
@@ -77,10 +78,13 @@ export function DashboardLayout({ role, onLogout }: DashboardLayoutProps) {
   } else if (subSection === "details" && subId) {
     activeKey = "procurement-details";
     selectedProcurementId = subId;
-  } else if (subSection === "dashboard" || subSection === "") {
+  } else if (subSection === "tab" && subId) {
+    // /tab/:tabKey — subId holds the real tab name
+    activeKey = subId;
+  } else if (!subSection || subSection === "dashboard") {
     activeKey = "dashboard";
   } else {
-    // It's a regular tab key (procurements, payments, etc.)
+    // Bare key directly in URL (fallback)
     activeKey = subSection;
   }
 

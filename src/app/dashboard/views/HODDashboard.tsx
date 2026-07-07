@@ -9,9 +9,6 @@ import { ProcurementTable } from "../components/ProcurementTable";
 import { StatusBadge } from "../components/StatusBadge";
 import { MOCK_PROCUREMENTS, getActionQueueForRole, getProcurementsForRole, formatLKR } from "../data";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// HOD Dashboard — Head of Department
-// ─────────────────────────────────────────────────────────────────────────────
 
 interface HODDashboardProps {
   user: UserContext;
@@ -214,7 +211,6 @@ function HODOverview({ user, onTabChange }: { user: UserContext; onTabChange: (k
   );
 }
 
-// ── Card components ───────────────────────────────────────────────────────────
 
 function HeroStatCard({ title, subtitle, value, badge, badgeUp, linkLabel, onClick }: {
   title: string; subtitle: string; value: string; badge: string;
@@ -350,7 +346,6 @@ function RegularStatCard({ icon, iconBg, title, subtitle, value, badge, badgeUp,
   );
 }
 
-// ── Table style ───────────────────────────────────────────────────────────────
 const thStyle: React.CSSProperties = {
   textAlign: "left",
   padding: "10px 16px",
@@ -362,9 +357,6 @@ const thStyle: React.CSSProperties = {
   borderBottom: "1px solid #F3F4F6",
 };
 
-// ── Sub-panels ────────────────────────────────────────────────────────────────
-
-// ── Multi-step Requisition Form ───────────────────────────────────────────────
 const STEPS = [
   { label: "Basic Info",       icon: "📋" },
   { label: "Product Details",  icon: "📦" },
@@ -498,7 +490,6 @@ function NewRequisitionPanel({ onSubmit, onViewProcurement, user }: { onSubmit: 
     if (validate(3)) setSubmitted(true);
   };
 
-  // ── Success screen ──────────────────────────────────────────────────────────
   if (submitted) {
     // In a real system we'd get the new PR ID from the server response.
     // For the demo we use the most recently created mock record as a stand-in.
@@ -586,7 +577,6 @@ function NewRequisitionPanel({ onSubmit, onViewProcurement, user }: { onSubmit: 
     );
   }
 
-  // ── Main form shell ─────────────────────────────────────────────────────────
   return (
     <div style={{ padding: "28px 28px 48px" }}>
       <PageTitleBar title="New Requisition" subtitle="Complete all steps to create a purchase requisition" />
@@ -865,7 +855,6 @@ function NewRequisitionPanel({ onSubmit, onViewProcurement, user }: { onSubmit: 
   );
 }
 
-// ── Helper UI components for the multi-step form ──────────────────────────────
 function StepCard({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>

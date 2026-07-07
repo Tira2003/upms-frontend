@@ -8,9 +8,6 @@ import { StatusBadge } from "../components/StatusBadge";
 import { PageTitleBar } from "../components/ContentHeader";
 import { MOCK_PROCUREMENTS, getActionQueueForRole, getProcurementsForRole, formatLKR } from "../data";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Bursar Dashboard — Fund Verification
-// ─────────────────────────────────────────────────────────────────────────────
 
 interface BursarDashboardProps {
   user: UserContext;

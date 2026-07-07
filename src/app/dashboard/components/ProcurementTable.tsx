@@ -3,9 +3,6 @@ import type { Procurement } from "../types";
 import { StatusBadge } from "./StatusBadge";
 import { formatLKR } from "../data";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// ProcurementTable — full data table of procurement records
-// ─────────────────────────────────────────────────────────────────────────────
 
 interface ProcurementTableProps {
   procurements: Procurement[];

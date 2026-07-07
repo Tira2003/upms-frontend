@@ -7,10 +7,6 @@ import { ProcurementTable } from "../components/ProcurementTable";
 import { EmptyState } from "../components/EmptyState";
 import { MOCK_PROCUREMENTS, getActionQueueForRole, getProcurementsForRole, formatLKR } from "../data";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// TEC Dashboard — TEC Member (Technical Evaluation Committee)
-// Tabs: Dashboard · Evaluations · All Procurements
-// ─────────────────────────────────────────────────────────────────────────────
 
 interface TECDashboardProps {
   user: UserContext;

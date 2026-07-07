@@ -9,9 +9,6 @@ import { WORKFLOW_STEPS } from "../types";
 import { formatLKR, getStepIndexForStatus } from "../data";
 import { StatusBadge } from "./StatusBadge";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// ProcurementStatusTracker — Full-page view for a single procurement
-// ─────────────────────────────────────────────────────────────────────────────
 
 interface ProcurementStatusTrackerProps {
   procurement: Procurement;
@@ -124,9 +121,6 @@ export function ProcurementStatusTracker({
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Step Progress Bar
-// ─────────────────────────────────────────────────────────────────────────────
 
 const STEP_ICONS = [FileText, DollarSign, FileText, ShoppingCart, Gavel, ShieldCheck, Package, Truck, ClipboardCheck, CreditCard];
 
@@ -258,9 +252,6 @@ function StepProgressBar({
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Current Stage Card
-// ─────────────────────────────────────────────────────────────────────────────
 
 function CurrentStageCard({
   procurement,
@@ -379,9 +370,6 @@ function CurrentStageCard({
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Procurement Info Grid
-// ─────────────────────────────────────────────────────────────────────────────
 
 function InfoField({ label, value, mono }: { label: string; value: string | undefined; mono?: boolean }) {
   if (!value) return null;
@@ -438,9 +426,6 @@ function ProcurementInfoGrid({ procurement }: { procurement: Procurement }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Bidders Section
-// ─────────────────────────────────────────────────────────────────────────────
 
 function BiddersSection({ procurement, activeStepIndex }: { procurement: Procurement; activeStepIndex: number }) {
   const bids = procurement.bids ?? [];
@@ -564,9 +549,6 @@ function ScorePill({ score }: { score: number }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Activity Timeline
-// ─────────────────────────────────────────────────────────────────────────────
 
 const ROLE_COLORS: Record<string, { bg: string; text: string; dot: string }> = {
   HOD: { bg: "#FEF3C7", text: "#92400E", dot: "#D97706" },
@@ -677,7 +659,6 @@ function ActivityTimeline({ procurement }: { procurement: Procurement }) {
   );
 }
 
-// ── Shared table header style ─────────────────────────────────────────────────
 const thStyle: React.CSSProperties = {
   textAlign: "left",
   padding: "10px 16px",

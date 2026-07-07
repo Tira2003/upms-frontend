@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate, useNavigate } from "react-router";
+import { Routes, Route, Navigate, useNavigate, useParams } from "react-router";
 import { WelcomeScreen } from "./components/WelcomeScreen";
 import { LoginScreen } from "./components/LoginScreen";
 import { RegisterScreen } from "./components/RegisterScreen";
@@ -24,9 +24,6 @@ export default function App() {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Route wrappers — each handles its own navigation
-// ─────────────────────────────────────────────────────────────────────────────
 
 function WelcomeRoute() {
   const nav = useNavigate();
@@ -79,10 +76,8 @@ function RolePickerRoute() {
 
 function DashboardRoute() {
   const nav = useNavigate();
-  // Extract role from URL — react-router v7 useParams isn't directly accessible
-  // here without a child component, so we read from location
-  const pathParts = window.location.pathname.split("/");
-  const roleSlug = pathParts[2]?.toUpperCase() as Role;
+  const { role: roleParam } = useParams<{ role: string }>();
+  const roleSlug = (roleParam ?? "").toUpperCase() as Role;
   const validRoles: Role[] = ["HOD", "BUR", "FBUR", "SDC", "TEC", "TB", "STK", "SUP", "FIN"];
   if (!validRoles.includes(roleSlug)) {
     return <Navigate to="/select-role" replace />;
@@ -95,9 +90,6 @@ function DashboardRoute() {
   );
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// RolePicker — demo role selection screen
-// ─────────────────────────────────────────────────────────────────────────────
 
 const ROLES: Role[] = ["HOD", "BUR", "FBUR", "SDC", "TEC", "TB", "STK", "SUP", "FIN"];
 
